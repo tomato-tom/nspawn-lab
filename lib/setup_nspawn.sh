@@ -3,7 +3,9 @@
 #
 # 各スクリプトに必要なパッケージを確認してインストール
 
-if source "$(dirname "${BASH_SOURCE[0]}")/common.sh"; then
+ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../ && pwd)"
+
+if source "$ROOTDIR/lib/common.sh"; then
     load_logger $0
     check_root || exit 1
 else

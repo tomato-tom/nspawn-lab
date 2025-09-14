@@ -1,7 +1,11 @@
 #!/bin/bash
+# network.sh
 # IPアドレスとルーティング管理
+# lib/vnet/network.sh
 
-source $(dirname "${BASH_SOURCE[0]}")/../common.sh
+ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../../ && pwd)"
+source "$ROOTDIR/lib/query.sh"
+source "$ROOTDIR/lib/logger.sh $0"
 
 # IPアドレス自動割り当て
 assign_ip_address() {
@@ -14,7 +18,7 @@ assign_ip_address() {
     local ip_addr="${base_ip}.$((num + 10))/24"
     
     ip netns exec "$ns" ip addr add "$ip_addr" dev "$interface"
-    log_info "netns $ns の $interface に $ip_addr を設定"
+    log info "netns $ns の $interface に $ip_addr を設定"
 }
 
 setup_routing() {
@@ -27,5 +31,5 @@ setup_routing() {
     
     # デフォルトルート追加
     ip netns exec "$ns" ip route add default via "$gateway" dev "$interface"
-    log_info "netns $ns にデフォルトルート設定: $gateway"
+    log info "netns $ns にデフォルトルート設定: $gateway"
 }

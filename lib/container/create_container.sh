@@ -5,7 +5,9 @@
 # 使用例:
 # lib/conteiner/create_container.sh c1
 
-if source "$(dirname "${BASH_SOURCE[0]}")/../common.sh"; then
+ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../../ && pwd)"
+
+if source "$ROOTDIR/lib/common.sh"; then
     load_logger $0
     check_root || exit 1
 else
@@ -25,7 +27,7 @@ CONTAINER_DIR="/var/lib/machines/$CONTAINER_NAME"
 
 if [ ! -f "$BASE_TAR" ]; then
     log warn "Base rootfs tar not found: $BASE_TAR"
-    $(dirname "${BASH_SOURCE[0]}")/create_rootfs.sh
+    "$ROOTDIR/lib/container/create_base_rootfs.sh"
 fi
 
 log info "Creating container $CONTAINER_NAME from $BASE_TAR"

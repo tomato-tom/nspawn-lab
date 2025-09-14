@@ -1,13 +1,21 @@
-#!/bin/bash -e
-# 共通設定とユーティリティ関数
+#!/bin/bash
 # lib/common.sh
+# 共通設定
 
-# スクリプトのディレクトリ設定
+ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../ && pwd)"
 
 # lib/logger.sh の読み込み
 load_logger() {
-    if ! source "$(dirname "${BASH_SOURCE[0]}")/logger.sh"; then
+    if ! source "$ROOTDIR/lib/logger.sh"; then
         echo "Failed to source logger.sh" >&2
+        return 1
+    fi
+}
+
+# lib/query.sh の読み込み
+load_query() {
+    if ! source "$ROOTDIR/lib/query.sh"; then
+        echo "Failed to source query.sh" >&2
         return 1
     fi
 }
@@ -19,6 +27,3 @@ check_root() {
     return 1
   fi
 }
-
-load_logger
-

@@ -3,11 +3,9 @@
 # Bridge management functions
 # lib/vnet/bridge.sh
 
-cd $(dirname ${BASH_SOURCE:-$0})
-cd ../
-
-source $(dirname "${BASH_SOURCE[0]}")/../query.sh
-source $(dirname "${BASH_SOURCE[0]}")/../logger.sh
+ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../../ && pwd)"
+source "$ROOTDIR/lib/query.sh"
+source "$ROOTDIR/lib/logger.sh $0"
 
 create_bridge() {
     local bridge="$1"
@@ -17,14 +15,18 @@ create_bridge() {
         log info "Bridge $bridge already exists"
     fi
 
-    ip link add "$bridge" type bridge || {
+    ip link add "$bridge" type bridge && {
+        log info "Bridge $bridge created"
+    } || {
         log error "Failed to create bridge: $bridge"
         return 1
     }
 
-    ip addr flush $bridge
-    ip addr add "$ip_addr" dev "$bridge"
-    log info "Bridge $bridge created (IP: $ip_addr)"
+    if [ -n "$ip_addr" ]; then
+        ip addr flush $bridge
+        ip addr add "$ip_addr" dev "$bridge"
+        log info "Bridge $bridge IP: $ip_addr)"
+    fi
 }
 
 delete_bridge() {

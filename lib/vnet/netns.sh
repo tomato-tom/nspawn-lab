@@ -1,21 +1,26 @@
 #!/bin/bash
-# ネットワーク名前空間管理
+# name: netns.sh
+# description: netns管理
+# path: lib/vnet/netns.sh
 
-source $(dirname "${BASH_SOURCE[0]}")/..//common.sh
+ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../../ && pwd)"
+source "$ROOTDIR/lib/common.sh"
+load_logger
+check_root
 
 create_netns() {
     local ns="$1"
     
     if netns_exists "$ns"; then
-        log_info "netns $ns は既に存在します"
+        log info "netns $ns は既に存在します"
         return 0
     fi
 
     ip netns add "$ns" || {
-        log_error "netns作成に失敗: $ns"
+        log error "netns作成に失敗: $ns"
         return 1
     }
-    log_info "netns $ns を作成しました"
+    log info "netns $ns を作成しました"
 }
 
 netns_exists() {
@@ -27,8 +32,8 @@ remove_netns() {
     local ns="$1"
     if netns_exists "$ns"; then
         ip netns del "$ns"
-        log_info "netns $ns を削除しました"
+        log info "netns $ns を削除しました"
     else
-        log_info "netns $ns は存在しません"
+        log info "netns $ns は存在しません"
     fi
 }

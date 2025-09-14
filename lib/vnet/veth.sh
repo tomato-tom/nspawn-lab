@@ -3,8 +3,12 @@
 # veth管理機能
 # lib/vnet/veth.sh
 
+ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../../ && pwd)"
+source "$ROOTDIR/lib/query.sh"
+source "$ROOTDIR/lib/logger.sh $0"
+
 init() {
-    if source "$(dirname "${BASH_SOURCE[0]}")/../common.sh"; then
+    if source "$ROOTDIR/lib/common.sh"; then
         load_logger $0 || exit 1
         check_root || exit 1
     else
@@ -13,7 +17,7 @@ init() {
     fi
 
     # setup
-    if source "$(dirname "${BASH_SOURCE[0]}")/../setup_nspawn.sh"; then
+    if source "$ROOTDIR/lib/setup_nspawn.sh"; then
         install_utils 
         install_yq 
     else
@@ -33,5 +37,7 @@ list_veth()
 
 veth_info()
 
-init
+main() {
+    init
+}
 

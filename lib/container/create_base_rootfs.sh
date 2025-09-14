@@ -6,7 +6,9 @@
 # 例:
 # lib/conteiner/create_rootfs.sh config/custom.conf
 
-if source "$(dirname "${BASH_SOURCE[0]}")/../common.sh"; then
+ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../../ && pwd)"
+
+if source "$ROOTDIR/lib/common.sh"; then
     load_logger $0 || exit 1
     check_root || exit 1
 else
@@ -15,7 +17,7 @@ else
 fi
 
 # setup
-if source "$(dirname "${BASH_SOURCE[0]}")/../setup_nspawn.sh"; then
+if source "$ROOTDIR/lib/setup_nspawn.sh"; then
     install_base 
 else
     exit 1
@@ -23,7 +25,7 @@ fi
 
 # Load default configuration
 log info "Load default.conf"
-config_file=$(dirname "${BASH_SOURCE[0]}")/../../config/default.conf
+config_file="$ROOTDIR/config/default.conf"
 source "$config_file" || {
     log error "Failed to source $config_file" >&2
     exit 1

@@ -5,7 +5,8 @@
 # usage:
 #   source lib/query.sh
 
-source $(dirname ${BASH_SOURCE[0]})/lib/logger.sh $0
+ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../ && pwd)"
+source "$ROOTDIR/lib/logger.sh $0"
 
 # Get bridge information
 get_bridge_info() {

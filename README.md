@@ -2,7 +2,7 @@
 title: "nspawn-lab"
 description: "Container Management Scripts with systemd-nspawn"
 tags:
-  - nwpawn
+  - nspawn
   - container
   - shellscript
 repository: "https://github.com/tomato-tom/nspawn-lab"

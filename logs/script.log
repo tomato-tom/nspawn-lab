@@ -1,0 +1,59 @@
+[2025-09-15 01:44:18] [INFO] [container.sh] Pacages already installd
+[2025-09-15 01:44:18] [INFO] [container.sh] Create container ...
+[2025-09-15 01:44:18] [INFO] [container.sh] Creating network namespace: 
+[2025-09-15 01:48:13] [INFO] [container.sh] Pacages already installd
+[2025-09-15 01:48:13] [INFO] [container.sh] Create container ...
+[2025-09-15 01:48:13] [INFO] [create_container.sh] Creating container  from /srv/nspawn_images/stable-base-rootfs.tar.gz
+[2025-09-15 01:48:14] [INFO] [create_container.sh] Container  created at /var/lib/machines/
+[2025-09-15 01:48:14] [INFO] [container.sh] Creating network namespace: 
+[2025-09-15 01:49:25] [INFO] [container.sh] Pacages already installd
+[2025-09-15 01:49:25] [INFO] [container.sh] Create container ...
+[2025-09-15 01:49:25] [INFO] [create_container.sh] Creating container  from /srv/nspawn_images/stable-base-rootfs.tar.gz
+[2025-09-15 01:49:26] [INFO] [create_container.sh] Container  created at /var/lib/machines/
+[2025-09-15 01:49:26] [INFO] [container.sh] Creating network namespace: 
+[2025-09-15 01:51:32] [INFO] [container.sh] Pacages already installd
+[2025-09-15 01:51:32] [INFO] [container.sh] Create container ...
+[2025-09-15 01:51:32] [INFO] [create_container.sh] Creating container  from /srv/nspawn_images/stable-base-rootfs.tar.gz
+[2025-09-15 01:51:33] [INFO] [create_container.sh] Container  created at /var/lib/machines/
+[2025-09-15 01:51:33] [INFO] [container.sh] Creating network namespace: 
+[2025-09-15 01:52:05] [INFO] [container.sh] Pacages already installd
+[2025-09-15 01:52:05] [INFO] [container.sh] Create container ...
+[2025-09-15 01:52:05] [INFO] [create_container.sh] Creating container  from /srv/nspawn_images/stable-base-rootfs.tar.gz
+[2025-09-15 01:52:07] [INFO] [create_container.sh] Container  created at /var/lib/machines/
+[2025-09-15 01:52:07] [INFO] [container.sh] Creating network namespace: 
+[2025-09-15 01:55:17] [INFO] [container.sh] Pacages already installd
+[2025-09-15 01:55:17] [INFO] [container.sh] Create container ...
+[2025-09-15 01:55:17] [INFO] [create_container.sh] Creating container  from /srv/nspawn_images/stable-base-rootfs.tar.gz
+[2025-09-15 01:55:19] [INFO] [create_container.sh] Container  created at /var/lib/machines/
+[2025-09-15 01:55:19] [INFO] [container.sh] Creating network namespace: 
+[2025-09-15 01:56:03] [INFO] [container.sh] Pacages already installd
+[2025-09-15 01:56:03] [INFO] [container.sh] Create container ...
+[2025-09-15 01:56:03] [INFO] [create_container.sh] Creating container  from /srv/nspawn_images/stable-base-rootfs.tar.gz
+[2025-09-15 01:56:05] [INFO] [create_container.sh] Container  created at /var/lib/machines/
+[2025-09-15 01:56:05] [INFO] [container.sh] Creating network namespace: 
+[2025-09-15 01:57:13] [INFO] [container.sh] Pacages already installd
+[2025-09-15 01:57:13] [INFO] [container.sh] Creating network namespace: jammy1
+[2025-09-15 01:57:13] [INFO] [container.sh] Start the container in background
+[2025-09-15 01:57:13] [INFO] [container.sh] Successfully started container jammy1
+[2025-09-15 01:57:13] [INFO] [container.sh] Service name: containerjammy1.service
+[2025-09-15 01:58:03] [INFO] [container.sh] Pacages already installd
+[2025-09-15 01:58:03] [WARN] [container.sh] Unknown action: 
+[2025-09-15 01:58:26] [INFO] [container.sh] Pacages already installd
+[2025-09-15 01:58:38] [INFO] [container.sh] Pacages already installd
+[2025-09-15 01:58:59] [INFO] [container.sh] Pacages already installd
+[2025-09-15 02:12:36] [WARN] [container.sh] jammy1 is stopped or does not exist, but clean it just in case
+[2025-09-15 02:12:36] [INFO] [container.sh] Cleaning up...
+[2025-09-15 02:12:49] [INFO] [container.sh] Creating network namespace: jammy1
+[2025-09-15 02:12:49] [INFO] [container.sh] Start the container in background
+[2025-09-15 02:12:49] [INFO] [container.sh] Successfully started container jammy1
+[2025-09-15 02:12:49] [INFO] [container.sh] Service name: containerjammy1.service
+[2025-09-15 02:13:35] [INFO] [container.sh] Stopping jammy1 gracefully...
+[2025-09-15 02:13:36] [INFO] [container.sh] Waiting for graceful stop... (1/5)s
+[2025-09-15 02:13:36] [INFO] [container.sh] Container stopped successfully
+[2025-09-15 02:13:36] [INFO] [container.sh] Container stopped: jammy1
+[2025-09-15 02:13:36] [INFO] [container.sh] Cleaning up...
+[2025-09-15 02:13:36] [INFO] [container.sh] Removing network namespace: jammy1
+[2025-09-15 02:13:48] [INFO] [container.sh] Creating network namespace: jammy1
+[2025-09-15 02:13:48] [INFO] [container.sh] Start the container in background
+[2025-09-15 02:13:48] [INFO] [container.sh] Successfully started container jammy1
+[2025-09-15 02:13:48] [INFO] [container.sh] Service name: containerjammy1.service

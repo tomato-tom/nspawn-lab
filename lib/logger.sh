@@ -8,10 +8,12 @@
 # log error "file not found: file"
 
 # ログファイル設定
-SOURCE_SCRIPT=$(basename "$1")
-LOG_FILE="$(dirname "${BASH_SOURCE[0]}")/../logs/script.log"
+ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../ && pwd)"
+LOG_FILE="$ROOTDIR/logs/script.log"
 LOG_MAX_SIZE=$((1024*1024))  # 1MB (バイト単位)
 LOG_MAX_FILES=3              # 保持するログファイルの最大数
+
+SOURCE_SCRIPT=$(basename "$1")  # 呼び出し元のスクリプト
 
 # ログレベルに応じた色付け
 COLOR_RESET="\033[0m"

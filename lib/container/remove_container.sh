@@ -7,7 +7,9 @@
 NAME=$1
 SERVICE="container-${NAME}"
 
-if source "$(dirname "${BASH_SOURCE[0]}")/../common.sh"; then
+ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../../ && pwd)"
+
+if source "$ROOTDIR/lib/common.sh"; then
     load_logger $0
     check_root || exit 1
 else
@@ -21,7 +23,7 @@ if [ -z "$NAME" ]; then
 fi
 
 log info "Stopping container $NAME"
-$(dirname ${BASH_SOURCE[0]})/stop_container.sh "$NAME"
+bash $ROOTDIR/lib/container/stop_container.sh "$NAME"
 
 if machinectl remove "$NAME"; then
     log info "successfully removed: $NAME"
