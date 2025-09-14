@@ -1,0 +1,84 @@
+#!/usr/sbin/nft -f
+# ==============================================================================
+# custom-nat-template.nft
+# ==============================================================================
+# Custom NAT table template for container networking
+# Uses custom table name to avoid conflicts with systemd auto-creation
+#
+# Usage:
+#   # Load this template (will not conflict with systemd):
+#   sudo nft -f custom-nat-template.nft
+#
+#   # Add networks for NAT masquerading:
+#   sudo nft add element ip custom.nat masq_saddr { 10.2.2.0/24 }
+#
+#   # Check current configuration:
+#   sudo nft list table ip custom.nat
+#
+# Advantages:
+#   - No conflict with systemd's io.systemd.nat table
+#   - Persistent across systemd operations
+#   - Full manual control
+# ==============================================================================
+
+# reset table
+delete table ip custom.nat
+#nft flush table ip custom.nat
+
+# template
+table ip custom.nat {
+        # ----------------------------------------------------------------------
+        # masq_saddr: Networks allowed for source NAT (masquerade)
+        # ----------------------------------------------------------------------
+        set masq_saddr {
+                type ipv4_addr
+                flags interval
+        }
+
+        # ----------------------------------------------------------------------
+        # map_port_ipport: Port forwarding mapping
+        # ----------------------------------------------------------------------
+        map map_port_ipport {
+                type inet_proto . inet_service : ipv4_addr . inet_service
+        }
+
+        # ----------------------------------------------------------------------
+        # prerouting: DNAT chain for port forwarding
+        # ----------------------------------------------------------------------
+        chain prerouting {
+                type nat hook prerouting priority dstnat + 1; policy accept;
+                fib daddr type local dnat ip to meta l4proto . th dport map @map_port_ipport
+        }
+
+        # ----------------------------------------------------------------------
+        # output: DNAT chain for local output traffic
+        # ----------------------------------------------------------------------
+        chain output {
+                type nat hook output priority -99; policy accept;
+                ip daddr != 127.0.0.0/8 oif "lo" dnat ip to meta l4proto . th dport map @map_port_ipport
+        }
+
+        # ----------------------------------------------------------------------
+        # postrouting: SNAT chain for masquerading
+        # ----------------------------------------------------------------------
+        chain postrouting {
+                type nat hook postrouting priority srcnat + 1; policy accept;
+                ip saddr @masq_saddr masquerade
+        }
+}
+
+# ==============================================================================
+# Additional setup required after loading:
+# ==============================================================================
+#
+# 1. Enable IP forwarding:
+#     echo 1 > /proc/sys/net/ipv4/ip_forward
+#     or permanent: sysctl -w net.ipv4.ip_forward=1
+#
+# 2. Add your networks to masq_saddr:
+#     nft add element ip custom.nat masq_saddr { 10.2.2.0/24 }
+#
+# 3. (Optional) Add port forwarding rules
+#     nft add element ip custom.nat map_port_ipport { tcp . 80 : 192.168.100.10 . 80 }
+#
+# ==============================================================================

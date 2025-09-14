@@ -1,0 +1,223 @@
+version: "1.0"
+experiment:
+  name: "nspawn-network-lab"
+  description: "systemd-nspawnコンテナとLinuxブリッジのネットワーク実験環境"
+  date: "2024-01-15"
+
+  host_system:
+    name: "lab-host"
+    os: "Ubuntu 24.04"
+    network_interfaces:
+      - name: "eth0"
+        description: "物理NIC（外部接続）"
+        ip: "192.168.1.100/24"
+        gateway: "192.168.1.1"
+      - name: "br0"
+        description: "メインブリッジ"
+        ip: "10.0.0.1/24"
+        type: "linux_bridge"
+        stp: true
+
+  linux_bridges:
+    - name: "br0"
+      description: "メイン実験用ブリッジ"
+      ip: "10.0.0.1/24"
+      members: []
+      config_file: "/etc/systemd/network/br0.netdev"
+
+    - name: "br-isolated"
+      description: "分離ネットワーク用ブリッジ"
+      ip: "192.168.100.1/24"
+      isolated: true
+      config_file: "/etc/systemd/network/br-isolated.netdev"
+
+  veth_pairs:
+    - id: "veth0-veth1"
+      description: "コンテナ1用vethペア"
+      host_side: "veth0"
+      container_side: "eth0"
+      bridge: "br0"
+
+    - id: "veth2-veth3"
+      description: "コンテナ2用vethペア"
+      host_side: "veth2"
+      container_side: "eth0"
+      bridge: "br0"
+
+    - id: "veth4-veth5"
+      description: "分離コンテナ用vethペア"
+      host_side: "veth4"
+      container_side: "eth0"
+      bridge: "br-isolated"
+
+  nspawn_containers:
+    - name: "container-alpha"
+      id: "ct-alpha"
+      type: "nspawn"
+      distro: "ubuntu:22.04"
+      directory: "/var/lib/machines/alpha"
+      network: "veth"
+      veth_pair: "veth0-veth1"
+      interfaces:
+        - name: "eth0"
+          ip: "10.0.0.10/24"
+          gateway: "10.0.0.1"
+      services:
+        - "ssh"
+        - "nginx"
+      purpose: "メインコンテナ（Webサーバー）"
+
+    - name: "container-beta"
+      id: "ct-beta"
+      type: "nspawn"
+      distro: "debian:bookworm"
+      directory: "/var/lib/machines/beta"
+      network: "veth"
+      veth_pair: "veth2-veth3"
+      interfaces:
+        - name: "eth0"
+          ip: "10.0.0.11/24"
+          gateway: "10.0.0.1"
+      services:
+        - "ssh"
+        - "postgresql"
+      purpose: "データベースサーバー"
+
+    - name: "container-gamma"
+      id: "ct-gamma"
+      type: "nspawn"
+      distro: "alpine:edge"
+      directory: "/var/lib/machines/gamma"
+      network: "veth"
+      veth_pair: "veth4-veth5"
+      interfaces:
+        - name: "eth0"
+          ip: "192.168.100.10/24"
+          gateway: "192.168.100.1"
+      purpose: "分離ネットワークテスト用"
+
+    - name: "container-router"
+      id: "ct-router"
+      type: "nspawn"
+      distro: "archlinux"
+      directory: "/var/lib/machines/router"
+      network: "multiple"
+      interfaces:
+        - name: "eth0"
+          description: "br0接続"
+          ip: "10.0.0.100/24"
+          bridge: "br0"
+        - name: "eth1"
+          description: "分離ネットワーク接続"
+          ip: "192.168.100.100/24"
+          bridge: "br-isolated"
+      purpose: "ルーティングとファイアウォール実験"
+
+  network_configs:
+    - type: "bridge"
+      name: "br0"
+      config: |
+        [NetDev]
+        Name=br0
+        Kind=bridge
+
+        [Bridge]
+        STP=on
+
+    - type: "bridge"
+      name: "br-isolated"
+      config: |
+        [NetDev]
+        Name=br-isolated
+        Kind=bridge
+
+    - type: "veth"
+      pair: "veth0-veth1"
+      config: |
+        [NetDev]
+        Name=veth0
+        Kind=veth
+
+        [Peer]
+        Name=veth1
+
+    - type: "nspawn"
+      container: "container-alpha"
+      config: |
+        [Network]
+        VirtualEthernet=yes
+        Bridge=br0
+
+  firewall_rules:
+    - description: "ホストのIPフォワーディング有効化"
+      command: "sysctl -w net.ipv4.ip_forward=1"
+
+    - description: "br0から外部へのMASQUERADE"
+      command: "iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -o eth0 -j MASQUERADE"
+
+    - description: "分離ネットワークの遮断"
+      command: "iptables -A FORWARD -i br-isolated -o br0 -j DROP"
+
+  experiment_scenarios:
+    - name: "基本通信テスト"
+      steps:
+        - "container-alpha → container-beta pingテスト"
+        - "container-alpha → 外部ネットワーク接続テスト"
+        - "分離ネットワーク通信テスト"
+
+    - name: "ルーティング実験"
+      steps:
+        - "container-routerで静的ルーティング設定"
+        - "br0とbr-isolated間の通信許可"
+        - "ファイアウォールルールの適用"
+
+    - name: "ネットワーク分離テスト"
+      steps:
+        - "分離ネットワークからの外部アクセス遮断確認"
+        - "特定ポートのみ許可する設定"
+
+  test_commands:
+    - description: "コンテナ間pingテスト"
+      command: "machinectl login container-alpha ping -c 4 10.0.0.11"
+
+    - description: "外部接続テスト"
+      command: "machinectl login container-alpha curl -I http://example.com"
+
+    - description: "ブリッジ状態確認"
+      command: "bridge link show"
+
+  directory_structure:
+    base: "/var/lib/machines"
+    containers:
+      - path: "/var/lib/machines/alpha"
+        size: "5GB"
+        filesystem: "btrfs"
+      - path: "/var/lib/machines/beta"
+        size: "5GB"
+        filesystem: "btrfs"
+      - path: "/var/lib/machines/gamma"
+        size: "2GB"
+        filesystem: "ext4"
+      - path: "/var/lib/machines/router"
+        size: "3GB"
+        filesystem: "btrfs"
+
+  automation_scripts:
+    - name: "setup-bridges.sh"
+      purpose: "ブリッジネットワークのセットアップ"
+      location: "./scripts/setup-bridges.sh"
+
+    - name: "create-containers.sh"
+      purpose: "nspawnコンテナの作成と設定"
+      location: "./scripts/create-containers.sh"
+
+    - name: "configure-network.sh"
+      purpose: "ネットワーク設定の適用"
+      location: "./scripts/configure-network.sh"
+
+  monitoring:
+    commands:
+      - "machinectl list"
+      - "networkctl list"
+      - "bridge fdb show"
+      - "ip addr show"
