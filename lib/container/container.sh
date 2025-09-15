@@ -176,7 +176,7 @@ main() {
     init $name || exit 1
 
     case "$action" in
-        start)
+        start|run)
             # コンテナなければ作成
             if ! container_exists $name; then
                 log info "Create container $name..."
@@ -216,22 +216,20 @@ main() {
             fi
         ;;
 
-        shell)
+        shell|exec)
             if ! is_running $name; then
                 exit 0
             fi
 
-            set -x
             shift 2
             local command="$@"
 
             container_shell $name "$command"
-            set +x
         ;;
 
-        status) container_status "$name" ;;
+        info|status) container_status "$name" ;;
         list|ls) container_list ;;
-        *) log warn "Unknown action: $action" ;;
+        *) usage ;;
     esac
 }
 
