@@ -227,9 +227,17 @@ main() {
             container_shell $name "$command"
         ;;
 
-        info|status) container_status "$name" ;;
-        list|ls) container_list ;;
-        *) usage ;;
+        info|status)
+            container_status "$name"
+        ;;
+
+        list|ls)
+            container_list
+        ;;
+
+        *)
+            usage
+        ;;
     esac
 }
 
