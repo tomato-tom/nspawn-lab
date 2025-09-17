@@ -50,9 +50,6 @@ show() {
     echo "$spaces$line"
 }
 
-trim_head_spaces() {
-    sed 's/^[[:space:]]*//'
-}
 
 # 関数呼び出し行をトリムする関数
 trim_function_call() {
@@ -92,8 +89,17 @@ get_called_functions() {
     
     # プロセス置換を使用してサブシェルを避ける
     while IFS= read -r line; do
-        line=$(echo "$line" | trim_head_spaces)
+        # 先頭空白を除去
+        line=$(echo "$line" | sed 's/^[[:space:]]*//')
+
+        # 空行スキップ
         [ -z "$line" ] && continue
+
+        # コメントをスキップ
+        [[ "$(echo "$line")" =~ ^# ]] && continue
+
+        # 行内コメント除去
+        line=$(echo "$line" | sed 's/[[:space:]]*#.*$//')
 
         # case文内を検出
         if [ "$line" == "$case_pattern" ]; then
