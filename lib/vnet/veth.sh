@@ -5,13 +5,15 @@
 
 set -euo pipefail
 
-# Logging function (fallback if not defined elsewhere)
-if ! command -v log >/dev/null 2>&1; then
-    log() {
-        local level="$1"
-        shift
-        echo "[$level] $*" >&2
-    }
+ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+# Source dependencies
+if source "$ROOTDIR/lib/common.sh"; then
+    load_logger $0
+    check_root || return 1
+else
+    echo "Failed to source common.sh" >&2
+    return 1
 fi
 
 # ===== Veth Pair Management Functions =====
@@ -478,7 +480,7 @@ veth_del_ip() {
 }
 
 # Export functions for use by other scripts
-export -f veth_exists veth_create veth_delete veth_delete_pair veth_get_peer
-export -f veth_attach veth_detach veth_up veth_down veth_status
-export -f veth_list veth_list_pairs veth_info veth_validate_name
-export -f veth_set_ip veth_del_ip
+#export -f veth_exists veth_create veth_delete veth_delete_pair veth_get_peer
+#export -f veth_attach veth_detach veth_up veth_down veth_status
+#export -f veth_list veth_list_pairs veth_info veth_validate_name
+#export -f veth_set_ip veth_del_ip

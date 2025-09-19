@@ -1,7 +1,7 @@
 #!/bin/bash
 # misc/map_functions.sh
-# シェルスクリプトの関数の関連性を見やすく表示するスクリプト
-# /lib/container/container.shに最適化した、ほかは試してない
+# シェルスクリプトの関数の関連性を見やすく表示
+# /lib/container/container.shに最適化
 
 script=$1
 FUNCTION_PATTERN="^[a-zA-Z_][a-zA-Z0-9_]*()"

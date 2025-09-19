@@ -13,18 +13,17 @@ if ! source "$ROOTDIR/lib/vnet/veth.sh"; then
     exit 1
 fi
 
+if source "$ROOTDIR/lib/common.sh"; then
+    load_logger $0
+    check_root || return 1
+else
+    echo "Failed to source common.sh" >&2
+    return 1
+fi
+
 # Default bridge configuration
 readonly DEFAULT_BRIDGE="br0"
 readonly DEFAULT_BRIDGE_IP="192.168.100.1/24"
-
-# Logging function (assuming it's defined elsewhere)
-#if ! command -v log >/dev/null 2>&1; then
-#    log() {
-#        local level="$1"
-#        shift
-#        echo "[$level] $*" >&2
-#    }
-#fi
 
 # ===== Bridge Management Functions =====
 
@@ -50,10 +49,11 @@ bridge_create() {
         return 1
     }
     
+    bridge_validate_name "$bridge" || return 1
+
     if bridge_exists "$bridge"; then
         log info "Bridge $bridge already exists"
         # Still try to bring it up and configure IP if needed
-        #bridge_up "$bridge"
         if [[ -n "$ip_addr" ]]; then
             # Check if IP already exists
             if ! ip addr show "$bridge" | grep -q "${ip_addr%/*}"; then
@@ -136,11 +136,6 @@ bridge_attach() {
             return 1
         fi
     fi
-
-    # Clean up any existing veth interfaces with the same name
-    #if veth_exists "$host_veth"; then
-    #    veth_delete "$host_veth" || true
-    #fi
 
     # Create veth pair
     if veth_create "$host_veth" "$container_veth"; then
@@ -335,13 +330,13 @@ bridge_validate_name() {
     local bridge="$1"
     
     [[ -n "$bridge" ]] || return 1
-    [[ ${#bridge} -le 15 ]] || return 1  # Linux interface name limit
+    [[ ${#bridge} -le 11 ]] || return 1
     [[ "$bridge" =~ ^[a-zA-Z0-9_-]+$ ]] || return 1
     
     return 0
 }
 
 # Export functions
-export -f bridge_exists bridge_create bridge_delete bridge_attach bridge_detach
-export -f bridge_up bridge_down bridge_list bridge_show bridge_status
-export -f bridge_cleanup_container bridge_validate_name
+#export -f bridge_exists bridge_create bridge_delete bridge_attach bridge_detach
+#export -f bridge_up bridge_down bridge_list bridge_show bridge_status
+#export -f bridge_cleanup_container bridge_validate_name
