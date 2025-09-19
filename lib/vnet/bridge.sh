@@ -22,7 +22,7 @@ else
 fi
 
 # Default bridge configuration
-readonly DEFAULT_BRIDGE="br0"
+readonly DEFAULT_BRIDGE="nspawn0"
 readonly DEFAULT_BRIDGE_IP="192.168.100.1/24"
 
 # ===== Bridge Management Functions =====
@@ -85,7 +85,7 @@ bridge_create() {
 
 # Delete bridge
 bridge_delete() {
-    local bridge="${1:-$DEFAULT_BRIDGE}"
+    local bridge="$1"
     
     [[ -n "$bridge" ]] || {
         log error "Bridge name is required"
@@ -175,7 +175,7 @@ bridge_attach() {
 
 # Detach container from bridge
 bridge_detach() {
-    local bridge="${1:-$DEFAULT_BRIDGE}"
+    local bridge="$1"
     local container_name="$2"
     local host_veth="ve-$container_name"
 

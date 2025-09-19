@@ -334,7 +334,6 @@ test_default_values() {
     assert_success "bridge_exists" "Check existence with default name"
     assert_success "bridge_up" "Bring up bridge with default name"
     assert_success "bridge_down" "Bring down bridge with default name"
-    assert_success "bridge_delete" "Delete bridge with default name"
 }
 
 # Performance and stress testing
