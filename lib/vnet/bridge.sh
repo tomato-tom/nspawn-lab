@@ -4,10 +4,16 @@
 # lib/vnet/bridge.sh
 
 ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../../ && pwd)"
-source "$ROOTDIR/lib/query.sh"
-source "$ROOTDIR/lib/logger.sh $0"
 
-create_bridge() {
+if source "$ROOTDIR/lib/vnet/veth.sh"; then
+    echo "Failed to source veth.sh"
+    return 1
+fi
+# veth.shもまとめるかも
+
+# bridge操作 ---
+# ブリッジ作成
+bridge_create() {
     local bridge="$1"
     local ip_addr="$2"
     
@@ -25,11 +31,11 @@ create_bridge() {
     if [ -n "$ip_addr" ]; then
         ip addr flush $bridge
         ip addr add "$ip_addr" dev "$bridge"
-        log info "Bridge $bridge IP: $ip_addr)"
+        log info "Bridge $bridge IP: $ip_addr"
     fi
 }
 
-delete_bridge() {
+bridge_delete() {
     local bridge="$1"
     
     # ブリッジ削除
@@ -38,12 +44,34 @@ delete_bridge() {
         log info "Bridge $bridge deleted"
     else
         log worn "Bridge $bridge does not exists"
+        return 1
     fi
 }
 
-bridge_exists() {
-    local bridge="$1"
-    ip link show $1 >/dev/nul || return 1
+# attach veth pair from bridge to netns
+bridge_attach() {
+    local bridge=$1
+    local name=$2
+    local vethA="ve-$name"
+    local vethB="host0"
+
+    bridge_exists || bridge_create $bridge
+    ip netns exec ns-$name : || ip netns add ns-$name
+    veth_create $vethA $vethB || return 1
+    veth_attach $vethA $bridge || return 1
+    veth_attach $vethB ns-$name || return 1
+
+    bridge_up
+}
+
+# detach container from bridge
+bridge_detach() {
+    local bridge=$1
+    local name=$2
+
+    bridge_exists || return 1
+    veth_detach ve-$name $bridge || return 1
+    log debug "$name detached from $bridge"
 }
 
 bridge_up() {
@@ -56,4 +84,18 @@ bridge_down() {
     local bridge="$1"
     ip link set "$bridge" down
     log debug "Bridge $bridge set to DOWN"
+}
+
+bridge_exists() {
+    local bridge="$1"
+    ip link show $bridge >/dev/nul 2>&1 || return 1
+}
+
+bridge_list() {
+    ip link show type bridge
+}
+
+bridge_show() {
+    local bridge=$1
+    ip link show $bridge
 }

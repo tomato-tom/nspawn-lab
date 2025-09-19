@@ -109,3 +109,58 @@
 [2025-09-19 14:37:44] [INFO] [container.sh] Cleaning up...
 [2025-09-19 14:37:44] [INFO] [container.sh] Removing network namespace: ns-c3
 [2025-09-19 14:37:44] [INFO] [container.sh] Container stopped: c3
+[2025-09-19 15:11:12] [INFO] [container.sh] Creating network namespace: ns-c1
+[2025-09-19 15:11:12] [INFO] [container.sh] Start c1 in background...
+[2025-09-19 15:11:12] [INFO] [container.sh] Successfully started container c1
+[2025-09-19 15:11:12] [INFO] [container.sh] Service name: containerc1.service
+[2025-09-19 15:11:42] [INFO] [container.sh] Stopping c1 gracefully...
+[2025-09-19 15:11:42] [DEBUG] [container.sh] Waiting for stopping... (0.2/5)s
+[2025-09-19 15:11:42] [INFO] [container.sh] Cleaning up...
+[2025-09-19 15:11:42] [INFO] [container.sh] Removing network namespace: ns-c1}
+[2025-09-19 15:11:42] [INFO] [container.sh] Container stopped: c1
+[2025-09-19 15:14:48] [INFO] [container.sh] Creating network namespace: ns-c1
+[2025-09-19 15:14:48] [INFO] [container.sh] Start c1 in background...
+[2025-09-19 15:14:48] [INFO] [container.sh] Successfully started c1
+[2025-09-19 15:14:48] [INFO] [container.sh] Service name: nspawn-c1.service
+[2025-09-19 15:15:17] [INFO] [container.sh] Stopping c1 gracefully...
+[2025-09-19 15:15:17] [DEBUG] [container.sh] Waiting for stopping... (0.2/5)s
+[2025-09-19 15:15:17] [INFO] [container.sh] Cleaning up...
+[2025-09-19 15:15:17] [INFO] [container.sh] Removing network namespace: ns-c1
+[2025-09-19 15:15:17] [INFO] [container.sh] Container stopped: c1
+[2025-09-19 15:15:40] [INFO] [container.sh] Creating network namespace: ns-c1
+[2025-09-19 15:15:40] [INFO] [container.sh] Start c1 in background...
+[2025-09-19 15:15:40] [INFO] [container.sh] Successfully started c1
+[2025-09-19 15:15:40] [INFO] [container.sh] Service name: nspawn-c1.service
+[2025-09-19 15:18:52] [INFO] [container.sh] Stopping c1 gracefully...
+[2025-09-19 15:18:52] [DEBUG] [container.sh] Waiting for stopping... (0.2/5)s
+[2025-09-19 15:18:52] [INFO] [container.sh] Cleaning up...
+[2025-09-19 15:18:52] [INFO] [container.sh] Removing network namespace: ns-c1
+[2025-09-19 15:18:52] [INFO] [container.sh] Container stopped: c1
+[2025-09-19 16:42:57] [INFO] [paw.sh] c1 is already running: c1
+[2025-09-19 16:43:04] [INFO] [paw.sh] Stopping c1 gracefully...
+[2025-09-19 16:43:04] [DEBUG] [paw.sh] Waiting for stopping... (0.2/5)s
+[2025-09-19 16:43:04] [INFO] [paw.sh] Cleaning up...
+[2025-09-19 16:43:04] [INFO] [paw.sh] Removing network namespace: ns-c1
+[2025-09-19 16:43:04] [INFO] [paw.sh] Container stopped: c1
+[2025-09-19 16:43:10] [INFO] [paw.sh] Creating network namespace: ns-c1
+[2025-09-19 16:43:10] [INFO] [paw.sh] Start c1 in background...
+[2025-09-19 16:43:10] [INFO] [paw.sh] Successfully started c1
+[2025-09-19 16:43:10] [INFO] [paw.sh] Service name: nspawn-c1.service
+[2025-09-19 16:43:15] [INFO] [paw.sh] Creating network namespace: ns-c2
+[2025-09-19 16:43:15] [INFO] [paw.sh] Start c2 in background...
+[2025-09-19 16:43:15] [INFO] [paw.sh] Successfully started c2
+[2025-09-19 16:43:15] [INFO] [paw.sh] Service name: nspawn-c2.service
+[2025-09-19 17:42:31] [INFO] [paw.sh] Bridge nspawn0 created
+[2025-09-19 17:42:53] [INFO] [paw.sh] Bridge nspawn0 deleted
+[2025-09-19 17:43:14] [INFO] [paw.sh] Bridge nspawn0 created
+[2025-09-19 17:43:14] [INFO] [paw.sh] Bridge nspawn0 IP: 10.1.1.1/24)
+[2025-09-19 17:44:23] [INFO] [paw.sh] Bridge nspawn0 deleted
+[2025-09-19 17:44:39] [INFO] [paw.sh] Bridge nspawn0 created
+[2025-09-19 17:44:39] [INFO] [paw.sh] Bridge nspawn0 IP: 10.1.1.1/24)
+[2025-09-19 17:46:29] [INFO] [paw.sh] Bridge nspawn1 created
+[2025-09-19 17:46:29] [INFO] [paw.sh] Bridge nspawn1 IP: 10.1.1.2/24)
+[2025-09-19 17:46:39] [INFO] [paw.sh] Bridge nspawn2 created
+[2025-09-19 17:46:39] [INFO] [paw.sh] Bridge nspawn2 IP: 10.1.1.3/24)
+[2025-09-19 17:47:48] [INFO] [paw.sh] Bridge nspawn0 deleted
+[2025-09-19 17:47:50] [INFO] [paw.sh] Bridge nspawn1 deleted
+[2025-09-19 17:47:53] [INFO] [paw.sh] Bridge nspawn2 deleted

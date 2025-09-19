@@ -15,7 +15,6 @@ init() {
         echo "Failed to source common.sh" >&2
         return 1
     fi
-
 }
 
 # ------------
@@ -23,17 +22,18 @@ init() {
 # ------------
 # 使い方
 usage() {
-    echo "$0 list"
-    echo "$0 start <name>"
+    echo "$0 ls"
+    echo "$0 run <name>"
     echo "$0 stop <name>"
     echo "$0 restart <name>"
-    echo "$0 status <name>"
+    echo "$0 info <name>"
 }
 
 # コンテナ開始
 container_start() {
     local name="$1"
     local service="nspawn-${name}"
+    local netns_name="ns-${name}"
 
     is_running $name && {
         log info "$name is already running: $name"
@@ -47,9 +47,9 @@ container_start() {
     }
 
     # netns作成
-    log info "Creating network namespace: ns-$name"
-    ip netns add "ns-$name" || {
-        log error "netns creation failed: ns-$name"
+    log info "Creating network namespace: $netns_name"
+    ip netns add "$netns_name" || {
+        log error "netns creation failed: $netns_name"
         return 1
     }
 
@@ -63,9 +63,9 @@ container_start() {
         /bin/systemd-nspawn \
             --boot \
             --machine=${name} \
-            --network-namespace-path=/run/netns/ns-${name} && {
-        log info "Successfully started container $name"
-        log info "Service name: container$name.service"
+            --network-namespace-path=/run/netns/$netns_name && {
+        log info "Successfully started $name"
+        log info "Service name: $service.service"
     } || {
         log error "Container start failed: $name"
         return 1
@@ -123,12 +123,11 @@ container_stop() {
     fi
 
     # 最終確認
+    cleanup $name
     if is_running "$name"; then
-        cleanup $name
         log error "Container stop failed: $name"
         return 1
     else
-        cleanup $name
         log info "Container stopped: $name"
         return 0
     fi
@@ -142,30 +141,32 @@ container_shell() {
     local command="$@"
 
     is_running $name || return 1
-    machinectl shell "$name" /bin/bash -c "$command"
+    machinectl --quiet shell "$name" /bin/bash -c "$command"
 }
 
 # クリーンアップ関数
 cleanup() {
     local name=$1
-    local service="container-${name}"
+    local service="nspawn-${name}.service"
+    local netns_name="ns-${name}"
 
     log info "Cleaning up..."
     # サービスが実行中なら停止
-    if systemctl is-active --quiet "$service.service"; then
-        log info "Stopping: $service.service"
-        sudo systemctl stop "$service.service"
+    if systemctl is-active --quiet "$service"; then
+        log info "Stopping: $service"
+        systemctl stop "$service"
     fi
     
-    # サービスユニットのクリーンアップ
-    if systemctl status "$service.service" >/dev/null 2>&1; then
-        log info "Resetting service unit: $service.service"
-        sudo systemctl reset-failed "$service.service" 2>/dev/null || true
+    # 異常サービスのクリーンアップ
+    if systemctl is-failed "$service" >/dev/null 2>&1; then
+        log info "Resetting service unit: $service"
+        systemctl reset-failed "$service" 2>/dev/null || true
     fi
 
-    if ip netns list | grep -qx "ns-$name"; then
-        log info "Removing network namespace: ns-$name"
-        sudo ip netns delete "ns-$name" 2>/dev/null || true
+    # netnsを削除
+    if ip netns list | grep -qx "$netns_name"; then
+        log info "Removing network namespace: $netns_name"
+        ip netns delete "$netns_name" 2>/dev/null || true
     fi
 }
 
@@ -201,25 +202,25 @@ main() {
     local name="$2"
 
     # 初期化
-    init $name || exit 1
+    init || exit 1
 
     case "$action" in
-        start)
+        start|run)
             container_start "$name"
         ;;
         restart)
             container_stop $name
             container_start $name
         ;;
-        stop)
+        stop|kill)
             container_stop $name
         ;;
-        shell)
+        shell|exec)
             shift 2
             local command="$@"
             container_shell $name "$command"
         ;;
-        status)
+        status|info)
             container_status "$name"
         ;;
         list|ls)
