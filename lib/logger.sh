@@ -9,10 +9,9 @@
 
 # ログファイル設定
 ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../ && pwd)"
-LOG_FILE="$ROOTDIR/logs/script.log"
+LOG_FILE="${$ROOTDIR/logs/script.log:-$2}"
 LOG_MAX_SIZE=$((1024*1024))  # 1MB (バイト単位)
 LOG_MAX_FILES=3              # 保持するログファイルの最大数
-
 SOURCE_SCRIPT=$(basename "$1")  # 呼び出し元のスクリプト
 
 # ログレベルに応じた色付け
@@ -21,7 +20,7 @@ COLOR_INFO="\033[32m"    # Green
 COLOR_WARN="\033[33m"    # Yellow
 COLOR_ERROR="\033[31m"   # Red
 
-mkdir -p $(dirname "${BASH_SOURCE[0]}")/../logs
+mkdir -p "$ROOTDIR/logs"
 
 # ログローテーション関数
 rotate_log() {
