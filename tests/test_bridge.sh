@@ -5,17 +5,18 @@
 set -euo pipefail
 
 # Test configuration
+LOG_FILE="/tmp/bridge_test.log"
 ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/.. && pwd)"
 readonly TEST_DIR="$ROOTDIR/tests"
 readonly SCRIPT_DIR="$ROOTDIR/lib/vnet"
 readonly TEST_BRIDGE="test-br0"
 readonly TEST_CONTAINER="test-01"
 readonly TEST_IP="192.168.200.1/24"
-readonly LOG_FILE="/tmp/bridge_test.log"
 
 # Colors for output
 readonly RED='\033[0;31m'
 readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
 readonly NC='\033[0m' # No Color
 
 # Test counters
@@ -26,6 +27,7 @@ TESTS_FAILED=0
 # Cleanup flag
 CLEANUP_ON_EXIT=true
 
+# Initialize logging
 init() {
     if source "$ROOTDIR/lib/common.sh"; then
         load_logger $0 $LOG_FILE

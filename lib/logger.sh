@@ -9,10 +9,11 @@
 
 # ログファイル設定
 ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../ && pwd)"
-LOG_FILE="${$ROOTDIR/logs/script.log:-$2}"
-LOG_MAX_SIZE=$((1024*1024))  # 1MB (バイト単位)
-LOG_MAX_FILES=3              # 保持するログファイルの最大数
-SOURCE_SCRIPT=$(basename "$1")  # 呼び出し元のスクリプト
+DEFAULT_LOG_FILE="$ROOTDIR/logs/script.log"
+LOG_FILE="${DEFAULT_LOG_FILE:-$2}"
+LOG_MAX_SIZE=$((1024*1024))
+LOG_MAX_FILES=3
+SOURCE_SCRIPT=$(basename "$1")
 
 # ログレベルに応じた色付け
 COLOR_RESET="\033[0m"
