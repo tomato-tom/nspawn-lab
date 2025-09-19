@@ -61,3 +61,51 @@
 [2025-09-16 17:37:42] [INFO] [create_container.sh] Container ct-01 created at /var/lib/machines/ct-01
 [2025-09-16 17:37:46] [INFO] [create_container.sh] Creating container ct-02 from /srv/nspawn_images/stable-base-rootfs.tar.gz
 [2025-09-16 17:37:47] [INFO] [create_container.sh] Container ct-02 created at /var/lib/machines/ct-02
+[2025-09-19 14:19:24] [ERROR] [container.sh] Must be run with root privileges
+[2025-09-19 14:21:08] [ERROR] [container.sh] Must be run with root privileges
+[2025-09-19 14:25:51] [ERROR] [container.sh] Must be run with root privileges
+[2025-09-19 14:27:21] [INFO] [container.sh] Create container c1...
+[2025-09-19 14:27:21] [INFO] [create_container.sh] Creating container c1 from /srv/nspawn_images/stable-base-rootfs.tar.gz
+[2025-09-19 14:27:23] [INFO] [create_container.sh] Container c1 created at /var/lib/machines/c1
+[2025-09-19 14:27:23] [INFO] [container.sh] Creating network namespace: ns-c1
+[2025-09-19 14:27:23] [INFO] [container.sh] Start c1 in background...
+[2025-09-19 14:27:23] [ERROR] [container.sh] Container start failed: c1
+[2025-09-19 14:33:39] [INFO] [container.sh] c1 is already running: c1
+[2025-09-19 14:34:13] [INFO] [container.sh] Stopping c1 gracefully...
+[2025-09-19 14:34:13] [DEBUG] [container.sh] Waiting for stopping... (0.2/5)s
+[2025-09-19 14:34:13] [INFO] [container.sh] Cleaning up...
+[2025-09-19 14:34:13] [INFO] [container.sh] Removing network namespace: ns-c1
+[2025-09-19 14:34:13] [INFO] [container.sh] Container stopped: c1
+[2025-09-19 14:34:28] [INFO] [container.sh] Creating network namespace: ns-c1
+[2025-09-19 14:34:28] [INFO] [container.sh] Start c1 in background...
+[2025-09-19 14:34:28] [INFO] [container.sh] Successfully started container c1
+[2025-09-19 14:34:28] [INFO] [container.sh] Service name: containerc1.service
+[2025-09-19 14:34:32] [INFO] [container.sh] Create container c2...
+[2025-09-19 14:34:32] [INFO] [create_container.sh] Creating container c2 from /srv/nspawn_images/stable-base-rootfs.tar.gz
+[2025-09-19 14:34:34] [INFO] [create_container.sh] Container c2 created at /var/lib/machines/c2
+[2025-09-19 14:34:34] [INFO] [container.sh] Creating network namespace: ns-c2
+[2025-09-19 14:34:34] [INFO] [container.sh] Start c2 in background...
+[2025-09-19 14:34:34] [INFO] [container.sh] Successfully started container c2
+[2025-09-19 14:34:34] [INFO] [container.sh] Service name: containerc2.service
+[2025-09-19 14:34:43] [INFO] [container.sh] Create container c3...
+[2025-09-19 14:34:43] [INFO] [create_container.sh] Creating container c3 from /srv/nspawn_images/stable-base-rootfs.tar.gz
+[2025-09-19 14:34:45] [INFO] [create_container.sh] Container c3 created at /var/lib/machines/c3
+[2025-09-19 14:34:45] [INFO] [container.sh] Creating network namespace: ns-c3
+[2025-09-19 14:34:45] [INFO] [container.sh] Start c3 in background...
+[2025-09-19 14:34:45] [INFO] [container.sh] Successfully started container c3
+[2025-09-19 14:34:45] [INFO] [container.sh] Service name: containerc3.service
+[2025-09-19 14:35:44] [INFO] [container.sh] Stopping c1 gracefully...
+[2025-09-19 14:35:44] [DEBUG] [container.sh] Waiting for stopping... (0.2/5)s
+[2025-09-19 14:35:44] [INFO] [container.sh] Cleaning up...
+[2025-09-19 14:35:44] [INFO] [container.sh] Removing network namespace: ns-c1
+[2025-09-19 14:35:44] [INFO] [container.sh] Container stopped: c1
+[2025-09-19 14:37:38] [INFO] [container.sh] Stopping c2 gracefully...
+[2025-09-19 14:37:39] [DEBUG] [container.sh] Waiting for stopping... (0.2/5)s
+[2025-09-19 14:37:39] [INFO] [container.sh] Cleaning up...
+[2025-09-19 14:37:39] [INFO] [container.sh] Removing network namespace: ns-c2
+[2025-09-19 14:37:39] [INFO] [container.sh] Container stopped: c2
+[2025-09-19 14:37:43] [INFO] [container.sh] Stopping c3 gracefully...
+[2025-09-19 14:37:44] [DEBUG] [container.sh] Waiting for stopping... (0.2/5)s
+[2025-09-19 14:37:44] [INFO] [container.sh] Cleaning up...
+[2025-09-19 14:37:44] [INFO] [container.sh] Removing network namespace: ns-c3
+[2025-09-19 14:37:44] [INFO] [container.sh] Container stopped: c3
