@@ -49,28 +49,36 @@ fi
 
 network() {
     local action="$1"
-    local bridge="$2"
+    local bridge
+    local name
+    local addr
+    shift
 
     case "$action" in
         create)
-            local addr="$3"
+            bridge="$1"
+            addr="$2"
             bridge_create "$bridge" "$addr"
         ;;
         delete)
+            bridge="$1"
             bridge_delete $bridge
         ;;
         attach)
-            local name="$3"
-            bridge_attach $brige $name
+            bridge="$1"
+            name="$2"
+            bridge_attach "$bridge" "$name"
         ;;
         detach)
-            local name="$3"
-            bridge_detach $brige $name
+            bridge="$1"
+            name="$2"
+            bridge_detach "$bridge" "$name"
         ;;
-        show)
-            bridge_show $brige
+        show|info)
+            bridge="$1"
+            bridge_show "$bridge"
         ;;
-        list|?)
+        list|ls|?)
             bridge_list
         ;;
         *)
@@ -101,10 +109,10 @@ case "$action" in
     ;;
     shell|exec)
         shift 2
-        local command="$@"
+        command="$@"
         container_shell $name "$command"
     ;;
-    status|info)
+    status|info|show)
         container_status "$name"
     ;;
     list|ls)

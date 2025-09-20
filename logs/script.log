@@ -1,0 +1,495 @@
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] Cleaning up test resources...
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] === Testing Veth Validation ===
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Valid veth name 'veth0'
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Valid veth name 'veth0'
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Valid veth name with dash
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Valid veth name with dash
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Valid veth name with underscore
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Valid veth name with underscore
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Valid veth name with numbers
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Valid veth name with numbers
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Valid veth name with dot
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Valid veth name with dot
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Empty veth name should fail
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Empty veth name should fail (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Too long veth name should fail
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Too long veth name should fail (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth name with spaces should fail
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth name with spaces should fail (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth name with invalid special chars should fail
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth name with invalid special chars should fail (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] === Testing Veth Existence Checking ===
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Non-existent veth should not exist
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Non-existent veth should not exist (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Create test veth pair
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Create test veth pair
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: First veth should exist after creation
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: First veth should exist after creation
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Second veth should exist after creation
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Second veth should exist after creation
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Delete test veth pair
+[2025-09-20 09:41:27] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Delete test veth pair
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: First veth should not exist after deletion
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: First veth should not exist after deletion (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Second veth should not exist after deletion
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Second veth should not exist after deletion (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] === Testing Veth Pair Lifecycle ===
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth A should not exist initially
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth A should not exist initially (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth B should not exist initially
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth B should not exist initially (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Create veth pair
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Create veth pair
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth A should exist after creation
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth A should exist after creation
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth B should exist after creation
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth B should exist after creation
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Duplicate creation should fail
+[2025-09-20 09:41:27] [WARN] [test_veth.sh] Veth interface test-veth-a already exists
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Duplicate creation should fail (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Delete veth pair by first interface
+[2025-09-20 09:41:27] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Delete veth pair by first interface
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth A should not exist after deletion
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth A should not exist after deletion (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth B should not exist after deletion
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth B should not exist after deletion (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Delete non-existent veth should fail
+[2025-09-20 09:41:27] [WARN] [test_veth.sh] Veth interface test-veth-a does not exist
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Delete non-existent veth should fail (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] === Testing Veth Pair Deletion ===
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Create veth pair for pair deletion test
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Create veth pair for pair deletion test
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Delete veth pair by both names
+[2025-09-20 09:41:27] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Delete veth pair by both names
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth A should not exist after pair deletion
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth A should not exist after pair deletion (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth B should not exist after pair deletion
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth B should not exist after pair deletion (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Create new veth pair
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Create new veth pair
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Delete one veth
+[2025-09-20 09:41:27] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Delete one veth
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Pair deletion should fail when neither exists
+[2025-09-20 09:41:27] [WARN] [test_veth.sh] Neither test-veth-a nor test-veth-b exists
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Pair deletion should fail when neither exists (expected failure)
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] === Testing Veth State Operations ===
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Create veth pair for state testing
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Create veth pair for state testing
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Bring veth A up
+[2025-09-20 09:41:27] [DEBUG] [test_veth.sh] Veth interface test-veth-a brought up
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Bring veth A up
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth A status should be LOWERLAYERDOWN
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth A status should be LOWERLAYERDOWN (expected: 'LOWERLAYERDOWN', got: 'LOWERLAYERDOWN')
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth B status should be DOWN
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth B status should be DOWN (expected: 'DOWN', got: 'DOWN')
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Bring veth B up
+[2025-09-20 09:41:27] [DEBUG] [test_veth.sh] Veth interface test-veth-b brought up
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Bring veth B up
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth A status should be UP
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth A status should be UP (expected: 'UP', got: 'UP')
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth B status should be UP
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth B status should be UP (expected: 'UP', got: 'UP')
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Bring veth A down
+[2025-09-20 09:41:27] [DEBUG] [test_veth.sh] Veth interface test-veth-a brought down
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Bring veth A down
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Bring veth B down
+[2025-09-20 09:41:27] [DEBUG] [test_veth.sh] Veth interface test-veth-b brought down
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Bring veth B down
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth A status should be DOWN
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth A status should be DOWN (expected: 'DOWN', got: 'DOWN')
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Veth B status should be DOWN
+[2025-09-20 09:41:27] [INFO] [test_veth.sh] ✓ PASS: Veth B status should be DOWN (expected: 'DOWN', got: 'DOWN')
+[2025-09-20 09:41:27] [TEST] [test_veth.sh] Testing: Clean up state test veth pair
+[2025-09-20 09:41:27] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Clean up state test veth pair
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] === Testing Veth Bridge Attachment ===
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Create test bridge
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Create test bridge
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Bring test bridge up
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Bring test bridge up
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Create veth pair for bridge test
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Create veth pair for bridge test
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Attach veth to bridge
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth test-veth-a attached to bridge test-br0
+[2025-09-20 09:41:28] [DEBUG] [test_veth.sh] Veth test-veth-a brought up
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Attach veth to bridge
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Veth should be attached to bridge
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Veth should be attached to bridge
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Detach veth from bridge
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth test-veth-a detached from bridge
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Detach veth from bridge
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Clean up bridge test veth pair
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Clean up bridge test veth pair
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Clean up test bridge
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Clean up test bridge
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] === Testing Veth Network Namespace Attachment ===
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Create test namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Create test namespace
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Create veth pair for netns test
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Create veth pair for netns test
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Attach veth to namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth test-veth-b moved to namespace test-ns
+[2025-09-20 09:41:28] [DEBUG] [test_veth.sh] Veth test-veth-b brought up in namespace test-ns
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Attach veth to namespace
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Veth should not exist in default namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Veth should not exist in default namespace (expected failure)
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Veth should exist in namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Veth should exist in namespace
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Clean up netns test veth pair
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Clean up netns test veth pair
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Clean up test namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Clean up test namespace
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] === Testing Veth IP Configuration ===
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Create veth pair for IP test
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Create veth pair for IP test
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Bring veth A up
+[2025-09-20 09:41:28] [DEBUG] [test_veth.sh] Veth interface test-veth-a brought up
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Bring veth A up
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Set IP on veth
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] IP 192.168.201.10/24 configured on test-veth-a
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Set IP on veth
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Veth should have configured IP
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Veth should have configured IP
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Remove IP from veth
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] IP 192.168.201.10/24 removed from test-veth-a
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Remove IP from veth
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Clean up IP test veth pair
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Clean up IP test veth pair
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] === Testing Veth IP Configuration in Namespace ===
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Create test namespace for IP test
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Create test namespace for IP test
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Create veth pair for netns IP test
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Create veth pair for netns IP test
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Move veth to namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth test-veth-b moved to namespace test-ns
+[2025-09-20 09:41:28] [DEBUG] [test_veth.sh] Veth test-veth-b brought up in namespace test-ns
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Move veth to namespace
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Bring veth A up
+[2025-09-20 09:41:28] [DEBUG] [test_veth.sh] Veth interface test-veth-a brought up
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Bring veth A up
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Bring veth B up in namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Bring veth B up in namespace
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Set IP on veth in namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] IP 192.168.201.10/24 configured on test-veth-b in namespace test-ns
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Set IP on veth in namespace
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Veth should have IP in namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Veth should have IP in namespace
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Remove IP from veth in namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] IP 192.168.201.10/24 removed from test-veth-b in namespace test-ns
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Remove IP from veth in namespace
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Clean up netns IP test veth pair
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Clean up netns IP test veth pair
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Clean up test namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Clean up test namespace
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] === Testing Error Handling ===
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Delete non-existent veth should fail
+[2025-09-20 09:41:28] [WARN] [test_veth.sh] Veth interface non-existent-veth does not exist
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Delete non-existent veth should fail (expected failure)
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Bring up non-existent veth should fail
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Veth interface non-existent-veth does not exist
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Bring up non-existent veth should fail (expected failure)
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Bring down non-existent veth should fail
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Veth interface non-existent-veth does not exist
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Bring down non-existent veth should fail (expected failure)
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Attach non-existent veth should fail
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Veth interface non-existent-veth does not exist
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Attach non-existent veth should fail (expected failure)
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Create veth with empty name should fail
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Both veth interface names are required
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Create veth with empty name should fail (expected failure)
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Create veth for invalid target test
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Create veth for invalid target test
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Attach to invalid target should fail
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Target invalid-target is neither a bridge nor a network namespace
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Attach to invalid target should fail (expected failure)
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Clean up invalid target test
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Clean up invalid target test
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Too long first name should fail
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Name validation failed: very-very-long-veth-name-that-exceeds-limit
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Too long first name should fail (expected failure)
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Too long second name should fail
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Name validation failed: very-very-long-veth-name-that-exceeds-limit
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Too long second name should fail (expected failure)
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] === Testing Veth Information Functions ===
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: List should fail when no veths exist
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Listing all veth interfaces:
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] ✗ FAIL: List should fail when no veths exist (should have failed)
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Create veth pair for info testing
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Create veth pair for info testing
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Create second veth pair for info testing
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth pair info-test-1 <-> info-test-2 created successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Create second veth pair for info testing
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: List should work when veths exist
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Listing all veth interfaces:
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: List should work when veths exist
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: List pairs should work
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Listing veth pairs:
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Could not determine peer for veth1
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Could not determine peer for veth0
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Veth interface test does not exist
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Veth interface info does not exist
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: List pairs should work
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Info should work for existing veth
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Info should work for existing veth
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Info should fail for non-existent veth
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Veth interface non-existent-veth does not exist
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Info should fail for non-existent veth (expected failure)
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Status should return valid state
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Status should return valid state
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Status should return NOT_EXISTS for non-existent veth
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] ✗ FAIL: Status should return NOT_EXISTS for non-existent veth (expected: 'NOT_EXISTS', got: 'NOT_EXISTS
+NOT_EXISTS')
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Clean up info test veth pair 1
+[2025-09-20 09:41:28] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:28] [INFO] [test_veth.sh] ✓ PASS: Clean up info test veth pair 1
+[2025-09-20 09:41:28] [TEST] [test_veth.sh] Testing: Clean up info test veth pair 2
+[2025-09-20 09:41:29] [ERROR] [test_veth.sh] Could not determine peer for info-test-1
+[2025-09-20 09:41:29] [INFO] [test_veth.sh] Veth interface info-test-1 (peer: [31mERROR: Could not determine peer for info-test-1[0m
+unknown) deleted successfully
+[2025-09-20 09:41:29] [INFO] [test_veth.sh] ✓ PASS: Clean up info test veth pair 2
+[2025-09-20 09:41:29] [TEST] [test_veth.sh] === Testing Veth Peer Discovery ===
+[2025-09-20 09:41:29] [TEST] [test_veth.sh] Testing: Create veth pair for peer test
+[2025-09-20 09:41:29] [INFO] [test_veth.sh] Veth pair test-veth-a <-> test-veth-b created successfully
+[2025-09-20 09:41:29] [INFO] [test_veth.sh] ✓ PASS: Create veth pair for peer test
+[2025-09-20 09:41:29] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:29] [ERROR] [test_veth.sh] Could not determine peer for test-veth-b
+[2025-09-20 09:41:29] [TEST] [test_veth.sh] Testing: Peer discovery should fail for non-existent veth
+[2025-09-20 09:41:29] [ERROR] [test_veth.sh] Veth interface non-existent-veth does not exist
+[2025-09-20 09:41:29] [INFO] [test_veth.sh] ✓ PASS: Peer discovery should fail for non-existent veth (expected failure)
+[2025-09-20 09:41:29] [TEST] [test_veth.sh] Testing: Clean up peer test veth pair
+[2025-09-20 09:41:29] [ERROR] [test_veth.sh] Could not determine peer for test-veth-a
+[2025-09-20 09:41:29] [INFO] [test_veth.sh] Veth interface test-veth-a (peer: [31mERROR: Could not determine peer for test-veth-a[0m
+unknown) deleted successfully
+[2025-09-20 09:41:29] [INFO] [test_veth.sh] ✓ PASS: Clean up peer test veth pair
+[2025-09-20 09:41:29] [INFO] [test_veth.sh] Cleaning up test resources...
+[2025-09-20 09:47:47] [INFO] [paw.sh] Bridge br0 created successfully
+[2025-09-20 09:48:01] [INFO] [paw.sh] Listing all bridge interfaces:
+[2025-09-20 09:48:16] [INFO] [paw.sh] Bridge details for nspawn0:
+[2025-09-20 09:48:16] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 09:48:16] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 09:49:03] [INFO] [paw.sh] Bridge details for nspawn0:
+[2025-09-20 09:49:03] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 09:49:03] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 09:49:11] [INFO] [paw.sh] Bridge details for nspawn0:
+[2025-09-20 09:49:11] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 09:49:11] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 09:50:54] [INFO] [paw.sh] Bridge details for nspawn0:
+[2025-09-20 09:50:54] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 09:50:54] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 09:51:07] [INFO] [paw.sh] Bridge details for nspawn0:
+[2025-09-20 09:51:07] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 09:51:07] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 09:51:11] [INFO] [paw.sh] Listing all bridge interfaces:
+[2025-09-20 09:51:23] [INFO] [paw.sh] Bridge nnspawn1 created successfully
+[2025-09-20 09:51:28] [INFO] [paw.sh] Listing all bridge interfaces:
+[2025-09-20 09:51:44] [INFO] [paw.sh] Bridge nnspawn2 created successfully
+[2025-09-20 09:51:46] [INFO] [paw.sh] Bridge nnspawn3 created successfully
+[2025-09-20 09:52:07] [INFO] [paw.sh] Create container ct1...
+[2025-09-20 09:52:07] [INFO] [create_container.sh] Creating container ct1 from /srv/nspawn_images/stable-base-rootfs.tar.gz
+[2025-09-20 09:52:08] [INFO] [create_container.sh] Container ct1 created at /var/lib/machines/ct1
+[2025-09-20 09:52:08] [INFO] [paw.sh] Creating network namespace: ns-ct1
+[2025-09-20 09:52:08] [INFO] [paw.sh] Start ct1 in background...
+[2025-09-20 09:52:08] [INFO] [paw.sh] Successfully started ct1
+[2025-09-20 09:52:08] [INFO] [paw.sh] Service name: nspawn-ct1.service
+[2025-09-20 09:52:32] [ERROR] [paw.sh] Bridge name and container name are required
+[2025-09-20 09:53:00] [ERROR] [paw.sh] Bridge name and container name are required
+[2025-09-20 09:53:09] [ERROR] [paw.sh] Bridge name and container name are required
+[2025-09-20 09:53:26] [INFO] [paw.sh] Bridge details for nspawn0:
+[2025-09-20 09:53:26] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 09:53:26] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 09:53:46] [INFO] [paw.sh] Listing all bridge interfaces:
+[2025-09-20 09:54:28] [ERROR] [paw.sh] Bridge name and container name are required
+[2025-09-20 10:10:43] [INFO] [paw.sh] Veth pair ve-ct1 <-> host0 created successfully
+[2025-09-20 10:10:43] [INFO] [paw.sh] Created veth pair: ve-ct1 <-> host0
+[2025-09-20 10:10:43] [INFO] [paw.sh] Veth ve-ct1 attached to bridge nspawn0
+[2025-09-20 10:10:43] [DEBUG] [paw.sh] Veth ve-ct1 brought up
+[2025-09-20 10:10:43] [INFO] [paw.sh] Attached ve-ct1 to bridge nspawn0
+[2025-09-20 10:10:43] [DEBUG] [paw.sh] Bridge nspawn0 brought up
+[2025-09-20 10:10:44] [INFO] [paw.sh] Veth host0 moved to namespace ns-ct1
+[2025-09-20 10:10:44] [DEBUG] [paw.sh] Veth host0 brought up in namespace ns-ct1
+[2025-09-20 10:10:44] [INFO] [paw.sh] Moved host0 to namespace ns-ct1
+[2025-09-20 10:16:50] [WARN] [paw.sh] Veth interface ve-ct1 already exists
+[2025-09-20 10:16:50] [ERROR] [paw.sh] Failed to create veth pair
+[2025-09-20 10:17:14] [ERROR] [paw.sh] Bridge name and container name are required
+[2025-09-20 10:23:52] [ERROR] [paw.sh] Bridge name and container name are required
+[2025-09-20 10:24:23] [ERROR] [paw.sh] Bridge name is required
+[2025-09-20 10:24:47] [ERROR] [paw.sh] Bridge name is required
+[2025-09-20 10:25:01] [INFO] [paw.sh] Listing all bridge interfaces:
+[2025-09-20 10:25:19] [ERROR] [paw.sh] Bridge name is required
+[2025-09-20 10:25:51] [WARN] [paw.sh] Veth interface ve-ct1 already exists
+[2025-09-20 10:25:51] [ERROR] [paw.sh] Failed to create veth pair
+[2025-09-20 10:26:28] [DEBUG] [paw.sh] Bridge nnspawn1 brought down
+[2025-09-20 10:26:28] [INFO] [paw.sh] Bridge nnspawn1 deleted successfully
+[2025-09-20 10:26:31] [DEBUG] [paw.sh] Bridge nnspawn2 brought down
+[2025-09-20 10:26:31] [INFO] [paw.sh] Bridge nnspawn2 deleted successfully
+[2025-09-20 10:26:34] [DEBUG] [paw.sh] Bridge nnspawn3 brought down
+[2025-09-20 10:26:34] [INFO] [paw.sh] Bridge nnspawn3 deleted successfully
+[2025-09-20 10:26:39] [INFO] [paw.sh] Listing all bridge interfaces:
+[2025-09-20 10:26:52] [INFO] [paw.sh] Bridge nspawn1 created successfully
+[2025-09-20 10:26:52] [INFO] [paw.sh] Bridge nspawn1 configured with IP: 192.168.100.1/24
+[2025-09-20 10:26:55] [INFO] [paw.sh] Bridge nspawn2 created successfully
+[2025-09-20 10:26:55] [INFO] [paw.sh] Bridge nspawn2 configured with IP: 192.168.100.1/24
+[2025-09-20 10:28:07] [INFO] [paw.sh] Create container ct2...
+[2025-09-20 10:28:07] [INFO] [create_container.sh] Creating container ct2 from /srv/nspawn_images/stable-base-rootfs.tar.gz
+[2025-09-20 10:28:09] [INFO] [create_container.sh] Container ct2 created at /var/lib/machines/ct2
+[2025-09-20 10:28:09] [INFO] [paw.sh] Creating network namespace: ns-ct2
+[2025-09-20 10:28:09] [INFO] [paw.sh] Start ct2 in background...
+[2025-09-20 10:28:09] [INFO] [paw.sh] Successfully started ct2
+[2025-09-20 10:28:09] [INFO] [paw.sh] Service name: nspawn-ct2.service
+[2025-09-20 10:32:06] [INFO] [paw.sh] Listing all bridge interfaces:
+[2025-09-20 10:32:18] [ERROR] [paw.sh] Bridge name is required
+[2025-09-20 10:32:32] [ERROR] [paw.sh] Bridge name is required
+[2025-09-20 10:35:16] [ERROR] [paw.sh] Bridge name is required
+[2025-09-20 10:38:44] [ERROR] [paw.sh] Bridge name is required
+[2025-09-20 10:38:51] [ERROR] [paw.sh] Bridge name is required
+[2025-09-20 10:39:22] [ERROR] [paw.sh] Bridge name is required
+[2025-09-20 10:39:38] [ERROR] [paw.sh] Bridge name is required
+[2025-09-20 10:39:44] [ERROR] [paw.sh] Bridge name is required
+[2025-09-20 10:41:09] [ERROR] [paw.sh] Bridge nspa does not exist
+[2025-09-20 10:41:58] [INFO] [paw.sh] Bridge details for nspawn0:
+[2025-09-20 10:41:58] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 10:41:58] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 10:42:10] [INFO] [paw.sh] Bridge details for nspawn1:
+[2025-09-20 10:42:10] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 10:42:11] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 10:42:23] [INFO] [paw.sh] Bridge details for nspawn2:
+[2025-09-20 10:42:23] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 10:42:23] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 10:42:54] [INFO] [paw.sh] Bridge details for nspawn0:
+[2025-09-20 10:42:54] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 10:42:54] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 10:43:39] [ERROR] [paw.sh] Could not determine peer for ve-ct1
+[2025-09-20 10:43:39] [INFO] [paw.sh] Veth interface ve-ct1 (peer: [31mERROR: Could not determine peer for ve-ct1[0m
+unknown) deleted successfully
+[2025-09-20 10:43:39] [INFO] [paw.sh] Detached and removed ct1 from bridge nspawn0
+[2025-09-20 10:44:00] [INFO] [paw.sh] Bridge details for nspawn0:
+[2025-09-20 10:44:00] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 10:44:00] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 10:44:16] [WARN] [paw.sh] Veth ve-ct1 does not exist, nothing to detach
+[2025-09-20 10:45:38] [INFO] [paw.sh] Veth pair ve-ct1 <-> host0 created successfully
+[2025-09-20 10:45:38] [INFO] [paw.sh] Created veth pair: ve-ct1 <-> host0
+[2025-09-20 10:45:38] [INFO] [paw.sh] Veth ve-ct1 attached to bridge nspawn1
+[2025-09-20 10:45:38] [DEBUG] [paw.sh] Veth ve-ct1 brought up
+[2025-09-20 10:45:38] [INFO] [paw.sh] Attached ve-ct1 to bridge nspawn1
+[2025-09-20 10:45:38] [DEBUG] [paw.sh] Bridge nspawn1 brought up
+[2025-09-20 10:45:38] [INFO] [paw.sh] Veth host0 moved to namespace ns-ct1
+[2025-09-20 10:45:38] [DEBUG] [paw.sh] Veth host0 brought up in namespace ns-ct1
+[2025-09-20 10:45:38] [INFO] [paw.sh] Moved host0 to namespace ns-ct1
+[2025-09-20 10:46:17] [ERROR] [paw.sh] Could not determine peer for ve-ct1
+[2025-09-20 10:46:17] [INFO] [paw.sh] Veth interface ve-ct1 (peer: [31mERROR: Could not determine peer for ve-ct1[0m
+unknown) deleted successfully
+[2025-09-20 10:46:17] [INFO] [paw.sh] Detached and removed ct1 from bridge nspawn1
+[2025-09-20 10:55:01] [INFO] [paw.sh] Veth pair ve-ct1 <-> host0 created successfully
+[2025-09-20 10:55:01] [INFO] [paw.sh] Created veth pair: ve-ct1 <-> host0
+[2025-09-20 10:55:01] [INFO] [paw.sh] Veth ve-ct1 attached to bridge nspawn1
+[2025-09-20 10:55:01] [DEBUG] [paw.sh] Veth ve-ct1 brought up
+[2025-09-20 10:55:01] [INFO] [paw.sh] Attached ve-ct1 to bridge nspawn1
+[2025-09-20 10:55:01] [DEBUG] [paw.sh] Bridge nspawn1 brought up
+[2025-09-20 10:55:01] [INFO] [paw.sh] Veth host0 moved to namespace ns-ct1
+[2025-09-20 10:55:01] [DEBUG] [paw.sh] Veth host0 brought up in namespace ns-ct1
+[2025-09-20 10:55:01] [INFO] [paw.sh] Moved host0 to namespace ns-ct1
+[2025-09-20 10:55:17] [ERROR] [paw.sh] Could not determine peer for ve-ct1
+[2025-09-20 10:55:17] [INFO] [paw.sh] Veth interface ve-ct1 (peer: [31mERROR: Could not determine peer for ve-ct1[0m
+unknown) deleted successfully
+[2025-09-20 10:55:17] [INFO] [paw.sh] Detached and removed ct1 from bridge nspawn1
+[2025-09-20 10:55:29] [INFO] [paw.sh] Veth pair ve-ct1 <-> host0 created successfully
+[2025-09-20 10:55:29] [INFO] [paw.sh] Created veth pair: ve-ct1 <-> host0
+[2025-09-20 10:55:29] [INFO] [paw.sh] Veth ve-ct1 attached to bridge nspawn1
+[2025-09-20 10:55:29] [DEBUG] [paw.sh] Veth ve-ct1 brought up
+[2025-09-20 10:55:29] [INFO] [paw.sh] Attached ve-ct1 to bridge nspawn1
+[2025-09-20 10:55:29] [DEBUG] [paw.sh] Bridge nspawn1 brought up
+[2025-09-20 10:55:30] [INFO] [paw.sh] Veth host0 moved to namespace ns-ct1
+[2025-09-20 10:55:30] [DEBUG] [paw.sh] Veth host0 brought up in namespace ns-ct1
+[2025-09-20 10:55:30] [INFO] [paw.sh] Moved host0 to namespace ns-ct1
+[2025-09-20 10:55:32] [WARN] [paw.sh] Veth interface ve-ct1 already exists
+[2025-09-20 10:55:32] [ERROR] [paw.sh] Failed to create veth pair
+[2025-09-20 10:55:40] [ERROR] [paw.sh] Could not determine peer for ve-ct1
+[2025-09-20 10:55:40] [INFO] [paw.sh] Veth interface ve-ct1 (peer: [31mERROR: Could not determine peer for ve-ct1[0m
+unknown) deleted successfully
+[2025-09-20 10:55:40] [INFO] [paw.sh] Detached and removed ct1 from bridge nspawn1
+[2025-09-20 10:55:42] [WARN] [paw.sh] Veth ve-ct1 does not exist, nothing to detach
+[2025-09-20 11:02:03] [INFO] [paw.sh] Listing all bridge interfaces:
+[2025-09-20 11:02:21] [INFO] [paw.sh] Bridge details for nspawn1:
+[2025-09-20 11:02:21] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 11:02:21] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 11:02:36] [INFO] [paw.sh] Bridge details for nspawn2:
+[2025-09-20 11:02:36] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 11:02:36] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 11:04:50] [INFO] [paw.sh] Bridge details for nspawn2:
+[2025-09-20 11:04:50] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 11:04:50] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 11:05:18] [INFO] [paw.sh] Listing all bridge interfaces:
+[2025-09-20 11:05:42] [DEBUG] [paw.sh] Bridge nspawn1 brought down
+[2025-09-20 11:05:42] [INFO] [paw.sh] Bridge nspawn1 deleted successfully
+[2025-09-20 11:05:51] [INFO] [paw.sh] Listing all bridge interfaces:
+[2025-09-20 11:06:30] [INFO] [paw.sh] Bridge details for nspawn0:
+[2025-09-20 11:06:30] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 11:06:30] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 11:09:31] [INFO] [paw.sh] Veth pair ve-ct2 <-> host0 created successfully
+[2025-09-20 11:09:31] [INFO] [paw.sh] Created veth pair: ve-ct2 <-> host0
+[2025-09-20 11:09:31] [INFO] [paw.sh] Veth ve-ct2 attached to bridge nspawn0
+[2025-09-20 11:09:31] [DEBUG] [paw.sh] Veth ve-ct2 brought up
+[2025-09-20 11:09:31] [INFO] [paw.sh] Attached ve-ct2 to bridge nspawn0
+[2025-09-20 11:09:32] [DEBUG] [paw.sh] Bridge nspawn0 brought up
+[2025-09-20 11:09:32] [INFO] [paw.sh] Veth host0 moved to namespace ns-ct2
+[2025-09-20 11:09:32] [DEBUG] [paw.sh] Veth host0 brought up in namespace ns-ct2
+[2025-09-20 11:09:32] [INFO] [paw.sh] Moved host0 to namespace ns-ct2
+[2025-09-20 11:12:17] [INFO] [paw.sh] Veth pair ve-ct1 <-> host0 created successfully
+[2025-09-20 11:12:17] [INFO] [paw.sh] Created veth pair: ve-ct1 <-> host0
+[2025-09-20 11:12:17] [INFO] [paw.sh] Veth ve-ct1 attached to bridge nspawn0
+[2025-09-20 11:12:17] [DEBUG] [paw.sh] Veth ve-ct1 brought up
+[2025-09-20 11:12:17] [INFO] [paw.sh] Attached ve-ct1 to bridge nspawn0
+[2025-09-20 11:12:17] [DEBUG] [paw.sh] Bridge nspawn0 brought up
+[2025-09-20 11:12:17] [INFO] [paw.sh] Veth host0 moved to namespace ns-ct1
+[2025-09-20 11:12:17] [DEBUG] [paw.sh] Veth host0 brought up in namespace ns-ct1
+[2025-09-20 11:12:17] [INFO] [paw.sh] Moved host0 to namespace ns-ct1
+[2025-09-20 11:12:42] [INFO] [paw.sh] Bridge details for nspawn0:
+[2025-09-20 11:12:42] [INFO] [paw.sh] Bridge addresses:
+[2025-09-20 11:12:42] [INFO] [paw.sh] Bridge forwarding database:
+[2025-09-20 11:13:23] [ERROR] [paw.sh] Could not determine peer for ve-ct1
+[2025-09-20 11:13:23] [INFO] [paw.sh] Veth interface ve-ct1 (peer: [31mERROR: Could not determine peer for ve-ct1[0m
+unknown) deleted successfully
+[2025-09-20 11:13:23] [INFO] [paw.sh] Detached and removed ct1 from bridge nspawn0

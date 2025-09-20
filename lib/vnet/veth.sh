@@ -3,8 +3,6 @@
 # Virtual Ethernet pair management functions
 # lib/vnet/veth.sh
 
-set -euo pipefail
-
 ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 # Source dependencies
@@ -41,11 +39,14 @@ veth_create() {
         return 1
     }
 
+    veth_validate_name
      # Check interface name length (Linux limit is 15 chars)
-    [[ ${#vethA} -gt 14 || ${#vethB} -gt 14 ]] && {
-        log error "Interface name too long (max 14 chars): $vethA, $vethB"
-        return 1
-    }
+    for ve in "$vethA" "$vethB"; do
+        veth_validate_name "$ve" || {
+            log error "Name validation failed: $ve"
+            return 1
+        }
+    done
     
     # Check if interfaces don't exist (they shouldn't for creation)
     if veth_exists "$vethA"; then
@@ -91,56 +92,6 @@ veth_delete() {
         return 0
     else
         log error "Failed to delete veth interface: $veth"
-        return 1
-    fi
-}
-
-# Delete veth pair by specifying both interfaces
-veth_delete_pair() {
-    local vethA="$1"
-    local vethB="$2"
-    
-    [[ -n "$vethA" && -n "$vethB" ]] || {
-        log error "Both veth interface names are required"
-        return 1
-    }
-    
-    # Only need to delete one end of the pair
-    if veth_exists "$vethA"; then
-        veth_delete "$vethA"
-    elif veth_exists "$vethB"; then
-        veth_delete "$vethB"
-    else
-        log warn "Neither $vethA nor $vethB exists"
-        return 1
-    fi
-}
-
-# Get peer interface name
-veth_get_peer() {
-    local veth="$1"
-    
-    [[ -n "$veth" ]] || {
-        log error "Veth interface name is required"
-        return 1
-    }
-    
-    if ! veth_exists "$veth"; then
-        log error "Veth interface $veth does not exist"
-        return 1
-    fi
-    
-    # Extract peer interface name from ip link output
-    local peer
-    peer=$(ip link show "$veth" | grep -oP 'link/ether.*peer \K\w+' 2>/dev/null || \
-           ethtool -S "$veth" 2>/dev/null | grep -oP 'peer_ifindex: \K\d+' | \
-           xargs -I {} ip link show | grep -B1 -A1 "^{}: " | grep -oP '^\d+: \K\w+' 2>/dev/null || \
-           echo "")
-    
-    if [[ -n "$peer" ]]; then
-        echo "$peer"
-    else
-        log error "Could not determine peer for $veth"
         return 1
     fi
 }
@@ -304,46 +255,11 @@ veth_status() {
 veth_list() {
     log info "Listing all veth interfaces:"
     if ip link show type veth 2>/dev/null | grep -q "veth"; then
-        ip link show type veth
+        ip -brief link show type veth
     else
         log warn "No veth interfaces found"
         return 1
     fi
-}
-
-# List veth pairs with their relationships
-veth_list_pairs() {
-    log info "Listing veth pairs:"
-    local veth_interfaces
-    veth_interfaces=$(ip link show type veth 2>/dev/null | grep -oP '^\d+: \K\w+' || true)
-    
-    if [[ -z "$veth_interfaces" ]]; then
-        log warn "No veth interfaces found"
-        return 1
-    fi
-    
-    local processed=()
-    for veth in $veth_interfaces; do
-        # Skip if already processed
-        if [[ " ${processed[*]} " =~ " ${veth} " ]]; then
-            continue
-        fi
-        
-        local peer
-        peer=$(veth_get_peer "$veth" 2>/dev/null || echo "unknown")
-        
-        local veth_status peer_status
-        veth_status=$(veth_status "$veth")
-        if [[ "$peer" != "unknown" ]]; then
-            peer_status=$(veth_status "$peer" 2>/dev/null || echo "UNKNOWN")
-            processed+=("$peer")
-        else
-            peer_status="UNKNOWN"
-        fi
-        
-        echo "$veth ($veth_status) <-> $peer ($peer_status)"
-        processed+=("$veth")
-    done
 }
 
 # Show detailed information about a veth interface
@@ -365,7 +281,7 @@ veth_info() {
     
     # Basic interface information
     echo "Basic Information:"
-    ip link show "$veth"
+    ip -brief link show "$veth"
     echo
     
     # IP addresses
@@ -400,87 +316,14 @@ veth_info() {
 
 # Validate veth interface name
 veth_validate_name() {
+    [[ $# -eq 0 ]] && return 1
+
     local veth="$1"
     
     [[ -n "$veth" ]] || return 1
-    [[ ${#veth} -le 15 ]] || return 1  # Linux interface name limit
+    [[ ${#veth} -lt 15 ]] || return 1  # Linux interface name limit
     [[ "$veth" =~ ^[a-zA-Z0-9_.-]+$ ]] || return 1
     
     return 0
 }
 
-# Configure IP address on veth interface
-veth_set_ip() {
-    local veth="$1"
-    local ip_addr="$2"
-    local namespace="${3:-}"
-    
-    [[ -n "$veth" && -n "$ip_addr" ]] || {
-        log error "Veth interface name and IP address are required"
-        return 1
-    }
-    
-    if [[ -n "$namespace" ]]; then
-        # Set IP in namespace
-        if ip netns exec "$namespace" ip addr add "$ip_addr" dev "$veth"; then
-            log info "IP $ip_addr configured on $veth in namespace $namespace"
-        else
-            log error "Failed to configure IP $ip_addr on $veth in namespace $namespace"
-            return 1
-        fi
-    else
-        # Set IP in default namespace
-        if ! veth_exists "$veth"; then
-            log error "Veth interface $veth does not exist"
-            return 1
-        fi
-        
-        if ip addr add "$ip_addr" dev "$veth"; then
-            log info "IP $ip_addr configured on $veth"
-        else
-            log error "Failed to configure IP $ip_addr on $veth"
-            return 1
-        fi
-    fi
-}
-
-# Remove IP address from veth interface
-veth_del_ip() {
-    local veth="$1"
-    local ip_addr="$2"
-    local namespace="${3:-}"
-    
-    [[ -n "$veth" && -n "$ip_addr" ]] || {
-        log error "Veth interface name and IP address are required"
-        return 1
-    }
-    
-    if [[ -n "$namespace" ]]; then
-        # Remove IP in namespace
-        if ip netns exec "$namespace" ip addr del "$ip_addr" dev "$veth"; then
-            log info "IP $ip_addr removed from $veth in namespace $namespace"
-        else
-            log error "Failed to remove IP $ip_addr from $veth in namespace $namespace"
-            return 1
-        fi
-    else
-        # Remove IP in default namespace
-        if ! veth_exists "$veth"; then
-            log error "Veth interface $veth does not exist"
-            return 1
-        fi
-        
-        if ip addr del "$ip_addr" dev "$veth"; then
-            log info "IP $ip_addr removed from $veth"
-        else
-            log error "Failed to remove IP $ip_addr from $veth"
-            return 1
-        fi
-    fi
-}
-
-# Export functions for use by other scripts
-#export -f veth_exists veth_create veth_delete veth_delete_pair veth_get_peer
-#export -f veth_attach veth_detach veth_up veth_down veth_status
-#export -f veth_list veth_list_pairs veth_info veth_validate_name
-#export -f veth_set_ip veth_del_ip

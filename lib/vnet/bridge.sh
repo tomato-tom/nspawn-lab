@@ -3,8 +3,6 @@
 # Bridge management functions for systemd-nspawn containers
 # lib/vnet/bridge.sh
 
-#set -euo pipefail
-
 ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 # Source dependencies
@@ -29,7 +27,7 @@ readonly DEFAULT_BRIDGE_IP="192.168.100.1/24"
 
 # Check if bridge exists
 bridge_exists() {
-    local bridge="${1:-$DEFAULT_BRIDGE}"
+    local bridge="$1"
     
     [[ -n "$bridge" ]] || {
         log error "Bridge name is required"
@@ -42,7 +40,7 @@ bridge_exists() {
 # Create bridge with optional IP address
 bridge_create() {
     local bridge="${1:-$DEFAULT_BRIDGE}"
-    local ip_addr="${2:-}"
+    local ip_addr="${2:-$DEFAULT_BRIDGE_IP}"
     
     [[ -n "$bridge" ]] || {
         log error "Bridge name is required"
@@ -111,6 +109,7 @@ bridge_delete() {
 # Attach container to bridge via veth pair
 bridge_attach() {
     local bridge="${1:-$DEFAULT_BRIDGE}"
+    echo $bridge
     local container_name="$2"
     local host_veth="ve-$container_name"
     local container_veth="host0"
@@ -207,7 +206,7 @@ bridge_detach() {
 
 # Bring bridge interface up
 bridge_up() {
-    local bridge="${1:-$DEFAULT_BRIDGE}"
+    local bridge="$1"
     
     [[ -n "$bridge" ]] || {
         log error "Bridge name is required"
@@ -225,7 +224,7 @@ bridge_up() {
 
 # Bring bridge interface down
 bridge_down() {
-    local bridge="${1:-$DEFAULT_BRIDGE}"
+    local bridge="$1"
     
     [[ -n "$bridge" ]] || {
         log error "Bridge name is required"
@@ -244,7 +243,7 @@ bridge_down() {
 # List all bridges
 bridge_list() {
     log info "Listing all bridge interfaces:"
-    if ip link show type bridge 2>/dev/null; then
+    if ip -brief link show type bridge 2>/dev/null; then
         return 0
     else
         log warn "No bridge interfaces found"
@@ -254,7 +253,7 @@ bridge_list() {
 
 # Show specific bridge details
 bridge_show() {
-    local bridge="${1:-$DEFAULT_BRIDGE}"
+    local bridge="$1"
     
     [[ -n "$bridge" ]] || {
         log error "Bridge name is required"
@@ -263,10 +262,10 @@ bridge_show() {
     
     if bridge_exists "$bridge"; then
         log info "Bridge details for $bridge:"
-        ip link show "$bridge"
+        ip -brief link show "$bridge"
         echo
         log info "Bridge addresses:"
-        ip addr show "$bridge"
+        ip -brief addr show "$bridge"
         echo
         log info "Bridge forwarding database:"
         bridge fdb show br "$bridge" 2>/dev/null || true
@@ -279,7 +278,7 @@ bridge_show() {
 
 # Get bridge status
 bridge_status() {
-    local bridge="${1:-$DEFAULT_BRIDGE}"
+    local bridge="$1"
     
     [[ -n "$bridge" ]] || {
         log error "Bridge name is required"
