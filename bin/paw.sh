@@ -42,6 +42,11 @@ if ! source "$ROOTDIR/lib/container/container.sh"; then
     exit 1
 fi
 
+if ! source "$ROOTDIR/lib/container/container_image.sh"; then
+    echo "Failed to source container_image.sh" >&2
+    exit 1
+fi
+
 if ! source "$ROOTDIR/lib/vnet/bridge.sh"; then
     echo "Failed to source bridge.sh" >&2
     exit 1
@@ -91,11 +96,12 @@ action="$1"
 name="$2"
 
 case "$action" in
-    create)
-        container_create "$name"
+    create|build)
+        shift 2
+        create_container "$name" "$@"
     ;;
-    delete)
-        container_delete "$name"
+    delete|remove|rm)
+        remove_container "$name"
     ;;
     start|run)
         container_start "$name"

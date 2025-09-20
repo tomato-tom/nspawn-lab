@@ -155,7 +155,7 @@ veth_attach() {
 # Detach veth from bridge (set to no master)
 veth_detach() {
     local veth="$1"
-    local bridge="${2:-}"  # Optional parameter for validation
+    local bridge
     
     [[ -n "$veth" ]] || {
         log error "Veth interface name is required"
@@ -167,21 +167,18 @@ veth_detach() {
         return 1
     fi
     
-    # If bridge is specified, validate the attachment
+    # Check attached
+    bridge=$(ip link show "$veth" | grep -oP 'master \K\w+' || echo "")
     if [[ -n "$bridge" ]]; then
-        local current_master
-        current_master=$(ip link show "$veth" | grep -oP 'master \K\w+' || echo "")
-        if [[ -n "$current_master" && "$current_master" != "$bridge" ]]; then
-            log warn "Veth $veth is attached to $current_master, not $bridge"
-        fi
+        log warn "$veth is not attached"
     fi
     
     # Detach from bridge
     if ip link set "$veth" nomaster; then
-        log info "Veth $veth detached from bridge${bridge:+ $bridge}"
+        log info "$veth detached from bridge"
         return 0
     else
-        log error "Failed to detach veth $veth from bridge${bridge:+ $bridge}"
+        log error "Failed to detach $veth"
         return 1
     fi
 }
@@ -286,32 +283,19 @@ veth_info() {
     
     # IP addresses
     echo "IP Addresses:"
-    ip addr show "$veth" | grep -E "(inet|inet6)" || echo "  No IP addresses configured"
+    ip -brief addr show "$veth" 
     echo
     
     # Peer information
-    echo "Peer Information:"
-    local peer
-    peer=$(veth_get_peer "$veth" 2>/dev/null || echo "unknown")
-    echo "  Peer interface: $peer"
+    #echo "Peer Information:"
+    #local peer
+    #peer=$(veth_get_peer "$veth" 2>/dev/null || echo "unknown")
+    #echo "  Peer interface: $peer"
     
     # Master/namespace information
     local master namespace
     master=$(ip link show "$veth" | grep -oP 'master \K\w+' || echo "none")
     echo "  Master bridge: $master"
-    
-    # Check if in namespace (this is tricky from outside the namespace)
-    if ip link show "$veth" | grep -q "link-netns"; then
-        namespace=$(ip link show "$veth" | grep -oP 'link-netns \K\w+' || echo "unknown")
-        echo "  Network namespace: $namespace"
-    else
-        echo "  Network namespace: default"
-    fi
-    
-    # Statistics
-    echo
-    echo "Statistics:"
-    ip -s link show "$veth" | tail -n +2
 }
 
 # Validate veth interface name
@@ -320,7 +304,7 @@ veth_validate_name() {
     [[ $# -eq 0 ]] && return 1
 
     [[ -n "$veth" ]] || return 1
-    [[ ${#veth} -lt 15 ]] || return 1  # Linux interface name limit
+    [[ ${#veth} -lt 15 ]] || return 1
     [[ "$veth" =~ ^[a-zA-Z0-9_.-]+$ ]] || return 1
     
     return 0

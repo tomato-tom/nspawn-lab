@@ -5,11 +5,9 @@
 
 ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
-# Source dependencies
-if ! source "$ROOTDIR/lib/vnet/veth.sh"; then
-    echo "ERROR: Failed to source veth.sh" >&2
-    exit 1
-fi
+# Default bridge configuration
+readonly DEFAULT_BRIDGE="nspawn0"
+readonly DEFAULT_BRIDGE_IP="192.168.100.1/24"
 
 if source "$ROOTDIR/lib/common.sh"; then
     load_logger $0
@@ -19,9 +17,16 @@ else
     return 1
 fi
 
-# Default bridge configuration
-readonly DEFAULT_BRIDGE="nspawn0"
-readonly DEFAULT_BRIDGE_IP="192.168.100.1/24"
+# Source dependencies
+if ! source "$ROOTDIR/lib/vnet/veth.sh"; then
+    log error "Failed to source veth.sh" >&2
+    return 1
+fi
+
+if ! source "$ROOTDIR/lib/vnet/netns.sh"; then
+    log error "Failed to source netns.sh" >&2
+    return 1
+fi
 
 # ===== Bridge Management Functions =====
 
@@ -126,14 +131,12 @@ bridge_attach() {
         bridge_create "$bridge"
     fi
     
-    # Create network namespace if it doesn't exist
-    if ! ip netns exec "$netns" true 2>/dev/null; then
-        if ip netns add "$netns"; then
-            log info "Created network namespace: $netns"
-        else
-            log error "Failed to create network namespace: $netns"
-            return 1
-        fi
+    # Create network namespace
+    if create_netns "$netns"; then
+        log info "Created network namespace: $netns"
+    else
+        log error "Failed to create network namespace: $netns"
+        return 1
     fi
 
     # Create veth pair
@@ -296,34 +299,6 @@ bridge_status() {
     fi
 }
 
-# Clean up all resources for a container
-bridge_cleanup_container() {
-    local container_name="$1"
-    local bridge="${2:-$DEFAULT_BRIDGE}"
-    local netns="ns-$container_name"
-    
-    [[ -n "$container_name" ]] || {
-        log error "Container name is required"
-        return 1
-    }
-    
-    log info "Cleaning up network resources for container: $container_name"
-    
-    # Detach from bridge (this will also remove the veth)
-    bridge_detach "$bridge" "$container_name" || true
-    
-    # Remove network namespace
-    if ip netns list 2>/dev/null | grep -q "^$netns"; then
-        if ip netns delete "$netns"; then
-            log info "Removed network namespace: $netns"
-        else
-            log warn "Failed to remove network namespace: $netns"
-        fi
-    fi
-    
-    return 0
-}
-
 # Validate bridge name
 bridge_validate_name() {
     local bridge="$1"
@@ -335,7 +310,3 @@ bridge_validate_name() {
     return 0
 }
 
-# Export functions
-#export -f bridge_exists bridge_create bridge_delete bridge_attach bridge_detach
-#export -f bridge_up bridge_down bridge_list bridge_show bridge_status
-#export -f bridge_cleanup_container bridge_validate_name

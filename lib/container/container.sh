@@ -10,29 +10,16 @@ TERMINATE_TIMEOUT=3
 KILL_TIMEOUT=2
 WAIT_INTERVAL=0.2
 
-# 初期設定
-init() {
-    if source "$ROOTDIR/lib/common.sh"; then
-        load_logger $0
-        check_root || return 1
-    else
-        echo "Failed to source common.sh" >&2
-        return 1
-    fi
-}
+# Source dependencies
+if ! source "$ROOTDIR/lib/vnet/netns.sh"; then
+    log error "Failed to source netns.sh" >&2
+    return 1
+fi
 
 # ------------
 # コンテナ操作
 # ------------
-# 使い方
-usage() {
-    echo "$0 ls"
-    echo "$0 run <name>"
-    echo "$0 stop <name>"
-    echo "$0 restart <name>"
-    echo "$0 info <name>"
-}
-
+#
 # コンテナ開始
 container_start() {
     local name="$1"
@@ -52,7 +39,7 @@ container_start() {
 
     # netns作成
     log info "Creating network namespace: $netns_name"
-    ip netns add "$netns_name" || {
+    create_netns "$netns_name" || {
         log error "netns creation failed: $netns_name"
         return 1
     }
@@ -181,15 +168,13 @@ cleanup() {
     
     # 異常サービスのクリーンアップ
     if systemctl is-failed "$service" >/dev/null 2>&1; then
-        log info "Resetting service unit: $service"
+        log info "Resetting failed service unit: $service"
         systemctl reset-failed "$service" 2>/dev/null || true
     fi
 
     # netnsを削除
-    if ip netns list | grep -qx "$netns_name"; then
-        log info "Removing network namespace: $netns_name"
-        ip netns delete "$netns_name" 2>/dev/null || true
-    fi
+    log info "Removing network namespace: $netns_name"
+    remove_netns
 }
 
 # -----------------
@@ -218,42 +203,3 @@ is_running() {
     local name=$1
     machinectl status "$name" >/dev/null 2>&1
 }
-
-main() {
-    local action="$1"
-    local name="$2"
-
-    # 初期化
-    init || exit 1
-
-    case "$action" in
-        start|run)
-            container_start "$name"
-        ;;
-        restart)
-            container_stop $name
-            container_start $name
-        ;;
-        stop|kill)
-            container_stop $name
-        ;;
-        shell|exec)
-            shift 2
-            local command="$@"
-            container_shell $name "$command"
-        ;;
-        status|info)
-            container_status "$name"
-        ;;
-        list|ls)
-            container_list
-        ;;
-        *)
-            usage
-        ;;
-    esac
-}
-
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main "$@"
-fi
