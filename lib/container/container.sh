@@ -5,6 +5,10 @@
 # lib/container/container.sh
 
 ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../../ && pwd)"
+DEFAULT_STOP_TIMEOUT=5
+TERMINATE_TIMEOUT=3
+KILL_TIMEOUT=2
+WAIT_INTERVAL=0.2
 
 # 初期設定
 init() {
@@ -75,21 +79,18 @@ container_start() {
 }
 
 container_wait_stopping() {
-    local max_wait=$1
-    local interval=0.2
-    local time=0
-
-    while : ; do
-        is_running "$name" || break
-
-        if awk -v time="$time" -v max="$max_wait" 'BEGIN {exit !(time >= max)}'; then
-            break
-        fi
-
-        sleep $interval
-        time=$(awk -v time="$time" -v interval="$interval" 'BEGIN {print time + interval}')
-        log debug "Waiting for stopping... ($time/$max_wait)s"
+    local name="$1"
+    local max_wait="${2:-5}"
+    local interval="${WAIT_INTERVAL:-0.2}"
+    local elapsed=0
+    
+    while is_running "$name" && (( $(echo "$elapsed < $max_wait" | bc -l) )); do
+        sleep "$interval"
+        elapsed=$(echo "$elapsed + $interval" | bc -l)
+        log debug "Waiting for container to stop... (${elapsed}s/${max_wait}s)"
     done
+    
+    ! is_running "$name"
 }
 
 # コンテナ停止
@@ -105,21 +106,20 @@ container_stop() {
     # 優雅な停止
     log info "Stopping $name gracefully..."
     machinectl stop "$name"
-    container_wait_stopping 5
-    
+    container_wait_stopping $name $DEFAULT_STOP_TIMEOUT
     
     # とにかく終了する
     if is_running "$name"; then
         log warn "Graceful stop failed, terminating..."
         machinectl terminate "$name"
-        container_wait_stopping 3
+        container_wait_stopping $name $TERMINATE_TIMEOUT
     fi
     
     # 強制停止
     if is_running "$name"; then
         log warn "Terminate failed, killing..."
         machinectl kill "$name"
-        container_wait_stopping 2
+        container_wait_stopping $name $KILL_TIMEOUT
     fi
 
     # 最終確認
@@ -131,7 +131,6 @@ container_stop() {
         log info "Container stopped: $name"
         return 0
     fi
-    
 }
 
 # コンテナ内でコマンド実行
@@ -142,6 +141,29 @@ container_shell() {
 
     is_running $name || return 1
     machinectl --quiet shell "$name" /bin/bash -c "$command"
+}
+
+container_validate_name() {
+    local name="$1"
+    
+    validate() {
+        [[ -n "$name" ]] || return 1
+        [[ ${#name} -lt 11 ]] || return 2
+        [[ "$name" =~ ^[a-zA-Z0-9_-]+$ ]] || return 3
+    }
+    
+    local exit_code
+    validate
+    exit_code=$?
+    
+    case $exit_code in
+        1) log error "Container name is required" ;;
+        2) log error "Container name too long (max 10 chars): '$name' (${#name} chars)" ;;
+        3) log error "Invalid container name format: '$name' (only alphanumeric, _, - allowed)" ;;
+        0) return 0 ;;
+    esac
+    
+    return $exit_code
 }
 
 # クリーンアップ関数
