@@ -6,6 +6,12 @@
 # 例:
 # lib/conteiner/create_rootfs.sh config/custom.conf
 
+WORK_DIR="/tmp/$DISTRO-base-rootfs"
+SIZE=1G
+IMAGE_DIR="/srv/nspawn_images"
+TARBALL="$IMAGE_DIR/$DISTRO-base-rootfs.tar.gz"
+HOSTNAME=$DISTRO
+
 ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../../ && pwd)"
 
 if source "$ROOTDIR/lib/common.sh"; then
@@ -13,13 +19,6 @@ if source "$ROOTDIR/lib/common.sh"; then
     check_root || exit 1
 else
     echo "Failed to source common.sh" >&2
-    exit 1
-fi
-
-# setup
-if source "$ROOTDIR/lib/setup_nspawn.sh"; then
-    install_base 
-else
     exit 1
 fi
 
@@ -32,15 +31,9 @@ source "$config_file" || {
 }
 
 # カスタム設定ファイルが引数渡されてたら読み込み
-[ "${1:-}" ] && source $1 || {
+[ -n "$1" ] && source $1 || {
     log warn "Failed to load custom config: $1"
 }
-
-WORK_DIR="/tmp/$DISTRO-base-rootfs"
-SIZE=1G
-IMAGE_DIR="/srv/nspawn_images"
-TARBALL="$IMAGE_DIR/$DISTRO-base-rootfs.tar.gz"
-HOSTNAME=$DISTRO
 
 # Cleanup
 cleanup() {
@@ -49,13 +42,8 @@ cleanup() {
 }
 
 log info "Creating rootfs..."
-
-if [ -d $WORK_DIR ]; then
-    umount $WORK_DIR && rm -rf $WORK_DIR/* || exit 1
-else
-    mkdir $WORK_DIR
-fi
-
+[ -d $WORK_DIR ] cleanup
+mkdir $WORK_DIR
 mount -t tmpfs -o size=$SIZE tmpfs $WORK_DIR
 
 debootstrap \

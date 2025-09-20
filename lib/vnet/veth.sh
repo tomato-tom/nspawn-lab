@@ -316,10 +316,9 @@ veth_info() {
 
 # Validate veth interface name
 veth_validate_name() {
+    local veth="$1"
     [[ $# -eq 0 ]] && return 1
 
-    local veth="$1"
-    
     [[ -n "$veth" ]] || return 1
     [[ ${#veth} -lt 15 ]] || return 1  # Linux interface name limit
     [[ "$veth" =~ ^[a-zA-Z0-9_.-]+$ ]] || return 1
