@@ -5,10 +5,6 @@
 
 ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
-# Default bridge configuration
-readonly DEFAULT_BRIDGE="nspawn0"
-readonly DEFAULT_BRIDGE_IP="192.168.100.1/24"
-
 if source "$ROOTDIR/lib/common.sh"; then
     load_logger $0
     check_root || return 1
@@ -28,6 +24,11 @@ if ! source "$ROOTDIR/lib/vnet/netns.sh"; then
     return 1
 fi
 
+if ! source "$ROOTDIR/lib/vnet/ip_route.sh"; then
+    log error "Failed to source ip_route.sh" >&2
+    return 1
+fi
+
 # ===== Bridge Management Functions =====
 
 # Check if bridge exists
@@ -44,8 +45,8 @@ bridge_exists() {
 
 # Create bridge with optional IP address
 bridge_create() {
-    local bridge="${1:-$DEFAULT_BRIDGE}"
-    local ip_addr="${2:-$DEFAULT_BRIDGE_IP}"
+    local bridge="$1"
+    local ip_addr="$2"
     
     [[ -n "$bridge" ]] || {
         log error "Bridge name is required"
@@ -77,7 +78,7 @@ bridge_create() {
 
     # Configure IP address if provided
     if [[ -n "$ip_addr" ]]; then
-        if ip addr add "$ip_addr" dev "$bridge"; then
+        if ip_addr_add "$ip_addr" "$bridge"; then
             log info "Bridge $bridge configured with IP: $ip_addr"
         else
             log error "Failed to configure IP address for bridge: $bridge"
@@ -113,7 +114,7 @@ bridge_delete() {
 
 # Attach container to bridge via veth pair
 bridge_attach() {
-    local bridge="${1:-$DEFAULT_BRIDGE}"
+    local bridge="$1"
     echo $bridge
     local container_name="$2"
     local host_veth="ve-$container_name"
