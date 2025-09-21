@@ -5,14 +5,13 @@
 #   create_base_rootfs, create_container, remove_container
 
 # Global variables
-WORK_DIR_PREFIX="/tmp"
 DEFAULT_SIZE="1G"
 IMAGE_DIR="/srv/nspawn_images"
 MACHINES_DIR="/var/lib/machines"
-META_DIR="$MACHINES_DIR/.meta"
 
 # Get root directory
 ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../.. && pwd)"
+META_DIR="$ROOTDIR/var/.meta"
 
 # Load common functions
 if source "$ROOTDIR/lib/common.sh"; then
@@ -23,7 +22,7 @@ else
     exit 1
 fi
 
-# Load default configuration
+# Load configuration
 load_config() {
     local custom_config="$1"
     
@@ -44,17 +43,16 @@ load_config() {
     fi
 }
 
+
 # Create base rootfs tarball
 create_base_rootfs() {
     local custom_config="$1"
-    local work_dir="$WORK_DIR_PREFIX/$DISTRO-base-rootfs"
+    load_config "$custom_config"
+    local work_dir="/tmp/$DISTRO-base-rootfs"
     local tarball="$IMAGE_DIR/$DISTRO-base-rootfs.tar.gz"
     
-    # Load configuration
-    load_config "$custom_config" || return 1
-    
     # Cleanup function
-    local cleanup() {
+    cleanup() {
         umount "$work_dir" 2>/dev/null || log error "Failed to unmount $work_dir"
         rm -rf "$work_dir" 2>/dev/null || log error "Failed to remove $work_dir"
     }
@@ -83,13 +81,6 @@ create_base_rootfs() {
     }
     
     # Initial system configuration
-    log info "Configuring initial settings..."
-    echo "root:root" | chroot "$work_dir" chpasswd || {
-        log error "Failed to set root password"
-        cleanup
-        return 1
-    }
-    
     chroot "$work_dir" bash -c "echo ${HOSTNAME:-$DISTRO} > /etc/hostname" || {
         log error "Failed to set hostname"
         cleanup
@@ -119,6 +110,7 @@ create_container() {
     local description="Container $container_name"
     local container_dir="$MACHINES_DIR/$container_name"
 
+
     if [ -z "$container_name" ]; then
         log error "Container name is required"
         echo "Usage: create_container <container_name> [base_tar] [description]"
@@ -144,7 +136,6 @@ create_container() {
                 ;;
         esac
     done
-    
 
     # Check if base tarball exists, create if not
     if [ ! -f "$base_tar" ]; then
@@ -156,7 +147,9 @@ create_container() {
         }
     fi
     
+    set -x
     log info "Creating container $container_name from $base_tar"
+    set +x
     
     # Create container directory
     mkdir -p "$container_dir" || {
@@ -167,6 +160,13 @@ create_container() {
     # Extract base rootfs
     tar -xzf "$base_tar" -C "$container_dir" || {
         log error "Failed to extract base rootfs"
+        return 1
+    }
+    
+    # update root password
+    log info "Configuring initial settings..."
+    echo "root:root" | chroot "$container_dir" chpasswd || {
+        log error "Failed to set root password"
         return 1
     }
     
