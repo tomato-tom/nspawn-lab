@@ -22,7 +22,6 @@
 # ==============================================================================
 
 # reset table
-delete table ip custom.nat
 #nft flush table ip custom.nat
 
 # template
