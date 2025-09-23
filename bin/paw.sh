@@ -10,13 +10,13 @@ paw COMMAND [ARGS]        コンテナ操作
 paw net COMMAND [ARGS]    ブリッジ操作
 
 Commands:
-  create NAME         コンテナを作成
-  delete NAME         コンテナを削除
-  run NAME            コンテナを起動
-  stop NAME           コンテナを停止
-  shell NAME COMMAND  コンテナを停止
-  ls                  コンテナ一覧を表示
-  show NAME           コンテナ情報を表示
+  create NAME [options] コンテナを作成
+  delete NAME           コンテナを削除
+  run NAME [options]    コンテナを起動
+  stop NAME             コンテナを停止
+  shell NAME COMMAND    コンテナを停止
+  ls                    コンテナ一覧を表示
+  show NAME [options]   コンテナ情報を表示
   
   net create BRIDGE       ブリッジを作成
   net delete BRIDGE       ブリッジを削除
@@ -104,7 +104,7 @@ case "$action" in
         remove_container "$name"
     ;;
     start|run)
-        container_start "$name"
+        container_start "$name" "$@"
     ;;
     restart)
         container_stop $name
