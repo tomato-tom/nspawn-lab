@@ -5,7 +5,7 @@
 
 create_netns() {
     local ns="$1"
-    netns_exists "$ns" && return 1
+    netns_exists "$ns" && return 0
     ip netns add "$ns" >/dev/null 2>&1 || return 1
 }
 

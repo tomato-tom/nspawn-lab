@@ -24,10 +24,10 @@ if ! source "$ROOTDIR/lib/vnet/netns.sh"; then
     return 1
 fi
 
-if ! source "$ROOTDIR/lib/vnet/ip_route.sh"; then
-    log error "Failed to source ip_route.sh" >&2
-    return 1
-fi
+#if ! source "$ROOTDIR/lib/vnet/ip_route.sh"; then
+#    log error "Failed to source ip_route.sh" >&2
+#    return 1
+#fi
 
 # ===== Bridge Management Functions =====
 

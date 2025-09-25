@@ -13,13 +13,18 @@ MACHINES_DIR="/var/lib/machines"
 ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../.. && pwd)"
 META_DIR="$ROOTDIR/var/.meta"
 
-# Load common functions
+# Source dependencies
 if source "$ROOTDIR/lib/common.sh"; then
     load_logger $0 || exit 1
     check_root || exit 1
 else
     echo "Failed to source common.sh" >&2
     exit 1
+fi
+
+if ! source "$ROOTDIR/lib/container/container_state.sh"; then
+    log error "Failed to source container_state.sh" >&2
+    return 1
 fi
 
 # Load configuration
@@ -147,9 +152,7 @@ create_container() {
         }
     fi
     
-    set -x
     log info "Creating container $container_name from $base_tar"
-    set +x
     
     # Create container directory
     mkdir -p "$container_dir" || {
@@ -175,13 +178,13 @@ create_container() {
         log warn "Failed to update hostname in container"
     }
     
-    # Create metadata
-    mkdir -p "$META_DIR"
-    cat > "$META_DIR/$container_name.conf" <<EOL
-CONTAINER_NAME="$container_name"
-DESCRIPTION="$description"
-CREATED_DATE="$(date +%Y-%m-%d)"
-EOL
+    # Update status
+    add_container_status $container_name
+    update_container_status $container_name state stoped
+
+    #if [ -n $description ]; then
+    #    update_container_status "$container_name" description "$description"
+    #fi
     
     log info "Container $container_name created successfully at $container_dir"
     return 0
@@ -197,27 +200,26 @@ remove_container() {
         echo "Usage: remove_container <container_name>"
         return 1
     fi
+
+    exists_container $name || {
+        log worn "Container $name does not exist"
+        return 0
+    }
     
     log info "Removing container $container_name"
     
     # Stop container first
-    if command -v stop_container >/dev/null 2>&1; then
-        stop_container "$container_name"
-    elif [ -f "$ROOTDIR/lib/container/stop_container.sh" ]; then
-        bash "$ROOTDIR/lib/container/stop_container.sh" "$container_name"
-    else
-        log warn "stop_container script not found, attempting to stop manually"
-        systemctl stop "$service" 2>/dev/null || true
-        machinectl stop "$container_name" 2>/dev/null || true
-    fi
+    (
+        source "$ROOTDIR/lib/container/container.sh"
+        container_stop "$container_name"
+    )
     
     # Remove container using machinectl
     if machinectl remove "$container_name"; then
         log info "Container $container_name removed successfully"
         
-        # Remove metadata if exists
-        [ -f "$META_DIR/$container_name.conf" ] && rm "$META_DIR/$container_name.conf"
-        
+        # Remove status data
+        remove_container_status $container_name
         return 0
     else
         log error "Failed to remove container: $container_name"
@@ -225,21 +227,23 @@ remove_container() {
     fi
 }
 
-# Main function to handle command line arguments
+# Main function
 main() {
     local action="$1"
+    local config
+    local container_name
     case "$action" in
         "create-base")
-            local config="$2"
+            config="$2"
             create_base_rootfs "$config"
             ;;
         "create")
-            local container_name="$2"
+            container_name="$2"
             shift 2
             create_container "$container_name" "$@"
             ;;
         "remove")
-            local container_name="$2"
+            container_name="$2"
             remove_container "$container_name"
             ;;
         *)
