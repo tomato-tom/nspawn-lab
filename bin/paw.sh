@@ -31,10 +31,10 @@ ROOTDIR="$(cd $(dirname $BASH_SOURCE[0])/../&& pwd)"
 
 if source "$ROOTDIR/lib/common.sh"; then
     load_logger $0
-    check_root || return 1
+    check_root || exit 1
 else
     echo "Failed to source common.sh" >&2
-    return 1
+    exit 1
 fi
 
 if ! source "$ROOTDIR/lib/container/container.sh"; then
