@@ -22,6 +22,8 @@ else
     exit 1
 fi
 
+# Todo
+# sourceじゃなくて直接スクリプト実行にしよう、init実行されないし、mainもsourceされてる
 if ! source "$ROOTDIR/lib/container/container_state.sh"; then
     log error "Failed to source container_state.sh" >&2
     return 1

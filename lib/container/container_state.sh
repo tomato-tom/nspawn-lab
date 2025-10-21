@@ -1,5 +1,5 @@
 #!/bin/bash
-# lib/state.sh
+# lib/container/container_state.sh
 # 状態管理
 # root権限不要
 
@@ -11,10 +11,6 @@ else
     echo "Failed to source common.sh" >&2
     exit 1
 fi
-
-
-#!/bin/bash
-# container-state.sh - nspawnコンテナ状態管理スクリプト
 
 STATUS_FILE="$ROOTDIR/var/status.json"
 
@@ -34,6 +30,10 @@ usage() {
 init_json() {
     if [ ! -f "$STATUS_FILE" ]; then
         echo '{"containers":{}}' > "$STATUS_FILE"
+
+        if [ -n "$SUDO_USER" ]; then
+            chown $SUDO_USER:$SUDO_USER "$STATUS_FILE"
+        fi
     fi
 }
 

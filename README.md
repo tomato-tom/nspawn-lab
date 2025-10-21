@@ -36,13 +36,13 @@ flowchart TD
     %% メインスクリプト
     PAW["paw.sh<br>main script"]:::mainScript
     
-    %% マネジメント層スクリプト
+    %% マネジメント層
     CONTAINER["container.sh<br>container management"]:::management
     IMAGE["container_image.sh<br>image management"]:::management
     BRIDGE["bridge.sh<br>layer 2 network management"]:::management
     IPROUTE["iproute.sh<br>IP address and routing management"]:::management
     
-    %% 低レベルネットワークスクリプト
+    %% ネットワーク
     VETH[veth.sh]:::network
     NETNS[netns.sh]:::network
     
