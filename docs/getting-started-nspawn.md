@@ -1,24 +1,24 @@
+---
+title: Getting Started Nspawn
+updated: 2026-01-28
+tags:
+- systemd-nspawn
+- container
+---
 # Getting Started nspawn
-
-軽量コンテナnspawnを使ってみよう
-とりあえずdebianのコンテナで
 
 https://wiki.debian.org/nspawn
 https://wiki.archlinux.jp/index.php/Systemd-nspawn
 
 
-## 1. 動作環境の準備
-
+インストール
 ```bash
 sudo apt install debootstrap systemd-container -y
 ```
 
-## 2. コンテナイメージの作成
-
-`debootstrap`でDebian系の環境を作るのが手軽。
-
+rootfs作成
 ```bash
-debootstrap --include=systemd,dbus stable /var/lib/machines/debian
+debootstrap --include=systemd,dbus stable /var/lib/machines/my-container
 ```
 > `/var/lib/machines`がデフォルトのイメージディレクトリ
 > machinectlでやるにはsystemd,dbusを含めると扱いやすい
@@ -26,23 +26,17 @@ debootstrap --include=systemd,dbus stable /var/lib/machines/debian
 初回はビルドに時間かかる、次回以降はrootfsをコピーすれば早い。
 
 
-## 3. コンテナの起動
-
 作成したディレクトリを指定してコンテナを起動する。
 
 ```bash
 sudo systemd-nspawn -M my-container
 ```
 
-コンテナに入ったら、`hostnamectl`や`ip addr`などで環境を確認してみよう。
+コンテナに入ったら、`hostnamectl`や`ip addr`などで環境を確認してみよう
 
-終了するときは
+終了するときは状況により
 `exit`
 Ctrl-] x3
-
------
-
-## 4. 便利コマンド
 
 コンテナ内部で特定のコマンドを実行
 

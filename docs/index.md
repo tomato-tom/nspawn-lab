@@ -1,11 +1,18 @@
+---
+title: index
+updated: 2026-01-28
+status: draft
+tags:
+- systemd-nspawn
+- docs
+---
 # 目次
 
 ### 基本操作
 - 01-getting-started-nspawn.md
     - ツールのインストール
     - コンテナイメージの作成
-    - コンテナの起動
-    - コンテナを削除
+    - 起動
 - 02-nspawn-basic.md
     - 主要ツール
         - systemd-nspawn
@@ -18,37 +25,29 @@
         - 作成、実行、停止、削除
         - クローン
         - コンテナにログイン
-        - ホストからコンテナ内スクリプト実行
-        - コンテナのリスト表示
+        - コンテナ内スクリプト実行
         - 各コンテナの情報表示
     - ネットワーク
-        - ホストのネットワークをそのまま使用
+        - ホストのネットワーク
         - 自動的なネットワーク、要systemd-networkd, systemd-resolved
+        - systemd-networkd
     - ファイルシステム
-        - ディレクトリバインドマウント（--bind=/path）
-        - 読み込み専用マウント（--read-only）
+        - ホストのディレクトリをマウント
+        - overlayfs
     - リソース制限
-        - CPU/Memory制限の基本（--cpu-shares, --memory=）
-    - 環境変数の渡し方（--setenv=KEY=VALUE）
+        - CPU/Memory制限
+    - 環境変数
 
 ### ネットワーク
 - nspawn-network.md
     - bridge作成
     - vethペア接続
-    - ホスト、コンテナの静的IPアドレス設定
+    - 静的IPアドレス
     - NAT
-    - 動作確認
+    - DNS
 - network-mangement-tools.md
     - iproute2
     - systemd-networkd
-    - networkmanager
-    - netplan
-- vlan.md
-- custom-routing.md
-- ipvlan-macvlan.md
-- port-forwarding.md
-- firewall.md
-- network-monitering.md
 
 ### システム管理
 - nspawn-systemd-integration.md
@@ -57,21 +56,21 @@
 - nspawn-journal-logging.md
 - nspawn-boot-options.md
 
-### セキュリティ編
+### セキュリティ
 - nspawn-security-hardening.md
 - nspawn-selinux.md
 - nspawn-capabilities.md
 - nspawn-readonly-containers.md
 - nspawn-user-namespace.md
 
-### 高度な設定編
+### 各種設定
 - nspawn-custom-rootfs.md
 - nspawn-overlayfs.md
 - nspawn-btrfs-integration.md
 - nspawn-multi-arch.md
 - nspawn-pxeboot.md
 
-### トラブルシューティング編
+### トラブルシューティング
 - nspawn-debugging.md
 - nspawn-common-errors.md
 - nspawn-boot-failures.md

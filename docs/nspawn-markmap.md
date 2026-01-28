@@ -1,17 +1,20 @@
 ---
-title: nspawn
+title: nspawn markmap
+updated: 2026-01-28
+status: draft
+tags:
+- systemd-nspawn
+- markdown-mindmap
 markmap:
   colorFreezeLevel: 2
 ---
-
 ## 特徴
-- 高機能なchroot
-- 軽量コンテナ
-- systemdサービス
+- systemd依存
+- OSぽいコンテナ
 
 ## 用途
-- 開発・テスト環境
-- 軽量サーバー
+- 開発・テスト
+- サーバー
 - CI/CD
 
 ## 主要ツール
@@ -22,14 +25,15 @@ markmap:
 
 ### ネットワーク管理
 - systemd-networkd
-  - 永続的な設定
-  - machinectl/systemd-nspawn の一部機能に依存されてる
+  - 設定ファイルで永続的な設定
+  - machinectl/systemd-nspawn の一部機能に依存
 - iproute2
   - コマンド・スクリプトでの設定
   - 一時的な設定向け
 - nftables
   - NAT
   - パケットフィルタリング
+  - machinectl/systemd-nspawn の一部機能に依存
 
 ### イメージ作成
 - debootstrap: debian, ubuntu
@@ -40,13 +44,19 @@ markmap:
 ## ファイルシステム
 ### ローカルファイルシステム  
 - ext4  
-  - デフォルトの標準ファイルシステム、安定性と互換性重視
+  - デフォルトの標準ファイルシステム
 - XFS  
-  - 大容量ファイル・高スループット向け（例：データベース、ストレージサーバー）
+  - 大容量ファイル・高スループット向け
 - Btrfs  
-  - 先進機能（スナップショット、サブボリューム、圧縮）
+  - スナップショット、サブボリューム、圧縮
 - ZFS  
-  - データ整合性・スケーラビリティに優れる（大規模ストレージ向け）
+  - データ整合性・スケーラビリティ
+- tmpfs
+  - メモリ上に一時的なコンテナ作成
+- SquashFS  
+  - 圧縮された読み取り専用ファイルシステム（Live CD/Dockerイメージなど）
+- OverlayFS  
+  - 複数のレイヤーを重ねたファイルシステム（Docker/コンテナで標準利用）
 
 ### 論理ボリューム管理
 - LVM (Logical Volume Manager)  
@@ -56,28 +66,11 @@ markmap:
 - NFS (Network File System)  
   - シンプルなファイル共有
 - CephFS  
-  - 分散ストレージ向け（クラウド/大規模ストレージ）
+  - 分散ストレージ向け
 - GlusterFS  
-  - スケーラブルな分散ファイルシステム（複数サーバーでストレージプール化）
+  - スケーラブルな分散ファイルシステム
 
-### 4. 特殊用途/軽量ファイルシステム  
-- SquashFS  
-  - 圧縮された読み取り専用ファイルシステム（Live CD/Dockerイメージで利用）
-- OverlayFS  
-  - 複数のレイヤーを重ねたファイルシステム（Docker/コンテナで標準利用）
-
-### 用途別選択例  
-| 用途 | 推奨ファイルシステム |  
-|------|---------------------|  
-| デスクトップ/通常サーバー | ext4（安定性）、XFS（パフォーマンス） |  
-| 大容量ストレージ/データ整合性 | ZFS、Btrfs |  
-| SSD/フラッシュストレージ | F2FS |  
-| コンテナ | OverlayFS、Btrfs |  
-| ネットワーク共有 | NFS（小規模）、CephFS/GlusterFS（大規模） |  
-| 読み取り専用（Live OS） | SquashFS |  
-
-
-## 参考リンク
-- [systemd-nspawn](https://www.freedesktop.org/software/systemd/man/latest/systemd-nspawn.html)
-- [machinectl](https://www.freedesktop.org/software/systemd/man/latest/machinectl.html#)
+## 参考
+- man machinectl
+- man systemd-nspawn
 
