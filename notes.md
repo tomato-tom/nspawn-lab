@@ -1,7 +1,7 @@
 # Systemd Nspawn Script
 
 bashスクリプト・メイン
-Ansibleなどで管理
+Ansibleなどで管理?
 
 ## ディレクトリ構造
 
@@ -81,9 +81,7 @@ Ansibleなどで管理
 ## 進化の流れ
 1. まずは基本的なテンプレートを提供
 2. 利用パターンを分析
-3. よく使われる設定をオプション化
-4. 使いながら調整
-4. 新しいユースケースに対応したテンプレート追加
+3. 使いながら調整
 
 
 ### テンプレート
@@ -107,8 +105,8 @@ storage:
     - "/tmp"
 
 resources:
-  memory: "2G"
-  cpus: 2
+  memory: "8G"
+  cpus: 8
 ```
 
 dev.yaml - 開発環境用
@@ -130,8 +128,8 @@ storage:
     - "$(pwd):/app"
 
 resources:
-  memory: "4G"
-  cpus: 4
+  memory: 32
+  cpus: 16
 ```
 
 prod.yaml - 本番環境用
@@ -157,9 +155,9 @@ storage:
     - "/etc/ssl/certs:/etc/ssl/certs:ro"
 
 resources:
-  memory: "2G"
+  memory: 4
   cpus: 2
-  memory_swap: "512M"
+  memory_swap: 4
 
 security:
   level: "strict"
