@@ -11,7 +11,7 @@ tags:
 # etckeeper
 
 /etcのバージョン管理ツール
-Git をバックエンドに使い、**設定ファイルの所有者・パーミッション・パッケージ更新との連携**など `/etc` 向けに最適化されている
+Git をバックエンドに使い、設定ファイルの所有者・パーミッション・パッケージ更新との連携など `/etc` 向けに最適化されている
 
 インストール
 ```sh
@@ -34,7 +34,7 @@ Initialized empty Git repository in /etc/.git/
 
 初期設定
 ```sh
-$ sudo etckeeper init
+$ sudo etckeeper init # これはやらないでもインストール時に実行されてるぽい
 
 # 確認
 $ sudo etckeeper vcs status
@@ -52,27 +52,44 @@ $ ls /etc/etckeeper/
 commit.d  daily  etckeeper.conf  init.d  list-installed.d  post-install.d  pre-commit.d  pre-install.d  unclean.d  uninit.d  update-ignore.d  vcs.d
 ```
 
-## ローカルgitにpushすればいいだろう
+
+## ローカルgitサーバーにpush
 
 リモートgit server
 - host: git-server
-- user: user
+- user: ubuntu
+
+サーバーごとにブランチわけ
+branch:
+- master
+- server/sv1
+- server/sv2
+- server/sv3
 
 ```
-# リモートリポジトリ作成
-ssh git-server git init --bare /srv/git/server1-etc.git
+# gitサーバーにリモートリポジトリ作成
+ssh git-server git init --bare /srv/git/etc.git
 
-# リモートリポジトリ追加
+# 手元にリモートリポジトリ追加
 # リモートのrootパスワードない場合はユーザー指定必要ある
-sudo git -C /etc remote add origin user@git-server:/srv/git/server1-etc.git
+sudo etckeeper vcs /etc remote add origin ubuntu@git-server:/srv/git/etckeeper.git
+sudo etckeeper vcs /etc remote -v
 
-# 確認
-sudo git -C /etc remote -v
+# branch作成
+sudo etckeeper vcs /etc branch origin server/sv1
+sudo etckeeper vcs /etc switch server/sv1
 
 # push
-sudo git -C /etc push -u origin master
+sudo etckeeper vcs /etc push -u origin server/sv1
 ```
+> テンプレートをmasterに置いとけばいいんじゃないか
 
-複数サーバーの設定どうしよう、ブランチ分けるか、それぞれリポジトリにするか
-だいたい同じ設定多いからテンプレートをmasterに置いて、それぞれbranchでいいか
+自動push
+/etc/etckeeper/etckeeper.conf
+```
+# To push each commit to a remote, put the name of the remote here.
+# (eg, "origin" for git). Space-separated lists of multiple remotes
+# also work (eg, "origin gitlab github" for git).
+PUSH_REMOTE="origin"
+```
 
