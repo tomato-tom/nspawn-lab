@@ -1,7 +1,7 @@
 ---
 title: etckeeper
 description: Virsion control for etc
-updated: 2026-02-17
+updated: 2026-02-24
 status: done
 tags:
 - virsion-control
@@ -28,14 +28,13 @@ Initialized empty Git repository in /etc/.git/
  create mode 100755 X11/Xreset
  create mode 100644 X11/Xreset.d/README
  create mode 100644 X11/Xresources/x11-common
+
  ...
 
 ```
 
-初期設定
+初期設定は特にやることないけど
 ```sh
-$ sudo etckeeper init # これはやらないでもインストール時に実行されてるぽい
-
 # 確認
 $ sudo etckeeper vcs status
 On branch master
@@ -55,6 +54,7 @@ commit.d  daily  etckeeper.conf  init.d  list-installed.d  post-install.d  pre-c
 
 ## ローカルgitサーバーにpush
 
+設定例
 リモートgit server
 - host: git-server
 - user: ubuntu
