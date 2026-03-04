@@ -51,13 +51,6 @@ markmap:
   - スナップショット、サブボリューム、圧縮
 - ZFS  
   - データ整合性・スケーラビリティ
-- tmpfs
-  - メモリ上に一時的なコンテナ作成
-- SquashFS  
-  - 圧縮された読み取り専用ファイルシステム（Live CD/Dockerイメージなど）
-- OverlayFS  
-  - 複数のレイヤーを重ねたファイルシステム（Docker/コンテナで標準利用）
-
 ### 論理ボリューム管理
 - LVM (Logical Volume Manager)  
   - 物理ストレージを柔軟に管理
@@ -69,6 +62,16 @@ markmap:
   - 分散ストレージ向け
 - GlusterFS  
   - スケーラブルな分散ファイルシステム
+
+### その他のファイルシステム
+- tmpfs
+  - メモリ上に一時的なコンテナ作成
+- SquashFS  
+  - 圧縮された読み取り専用ファイルシステム（Live CD/Dockerイメージなど）
+- OverlayFS  
+  - 複数のレイヤーを重ねたファイルシステム（Docker/コンテナで標準利用）
+- raw
+  - VMで使用可能
 
 ## 参考
 - man machinectl
