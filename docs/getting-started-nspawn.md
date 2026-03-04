@@ -1,6 +1,6 @@
 ---
 title: Getting Started Nspawn
-updated: 2026-01-28
+updated: 2026-03-05
 tags:
 - systemd-nspawn
 - container
@@ -27,9 +27,10 @@ debootstrap --include=systemd,dbus stable /var/lib/machines/my-container
 
 
 作成したディレクトリを指定してコンテナを起動する。
-
+rootのパスワード設定
 ```bash
 sudo systemd-nspawn -M my-container
+passwd
 ```
 
 コンテナに入ったら、`hostnamectl`や`ip addr`などで環境を確認してみよう
@@ -43,4 +44,3 @@ Ctrl-] x3
 ```bash
 sudo systemd-nspawn -M my-container /bin/echo "Hello from inside the container!"
 ```
-
