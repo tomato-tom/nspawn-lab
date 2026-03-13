@@ -10,13 +10,23 @@ tags:
 # lighttpd rootfs server
 
 各マシンでISO/Rootfsをサクッとダウンロードできるようにローカル配布サーバーに置いとく
+```
+sudo machinectl pull-tar --verify=no http://local-server/rootfs/bookworm-min.tar.gz
+sudo machinectl clone bookworm-min ct1
+```
 
-コンテナ内のファイル構造
+コンテナ(lighttpd server)内のファイル構造
 ```bash
-/var/www/html/     # www-data:www-data
-├── index.php          # ISO/rootfs一覧表示
-├── iso/               # ISOファイル配布
-└── rootfs/            # rootfsファイル配布
+/var/www/html/             # lighttpdのルート
+    ├── index.php          # ISO/rootfs一覧表示
+    ├── iso/               # ISOファイル配布
+    │   ├── ubuntu.iso
+    │   ├── fedora.iso
+    │   └── arch.iso
+    └── rootfs/            # rootfsファイル配布
+        ├── ubuntu.tar.gz
+        ├── fedora.tar.gz
+        └── debian.tar.gz
 ```
 
 ## lighttpdのセットアップ
@@ -220,9 +230,14 @@ curl http://localhost/info.php | head
 ブラウザから接続して表示やダウンロード
 http://local-server
 
-### ファイル操作
+### rootfsのやりとり
 
-他のマシンからpullして更新してpushとかで
+外部からダウンロードしてビルド
+```
+sudo debootstrap bookworm --minbase /var/lib/machines/bookworm-min
+```
+
+他のマシンからpullして更新してpush
 
 ```bash
 # ローカルのイメージをtarエクスポート
@@ -230,8 +245,10 @@ sudo machinectl export-tar bookworm-min bookworm-min.tar.gz
 
 # サーバーにpush
 curl -T bookworm-min.tar.gz http://local-server/rootfs/bookworm-min.tar.gz
+```
 
-# 他のマシンでpull
-sudo machinectl pull-tar http://local-server/rootfs/bookworm-min.tar.gz
+他のマシンでpull
+```
+sudo machinectl pull-tar --verify=no http://local-server/rootfs/bookworm-min.tar.gz
 ```
 
