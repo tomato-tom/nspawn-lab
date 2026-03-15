@@ -35,7 +35,7 @@ Ansibleなどで管理?
 ├── logs
 │   └── script.log
 ├── Makefile
-├── misc
+├── snippets
 │   ├── assert.sh
 │   ├── debian_static_address.sh
 │   ├── map_functions.sh

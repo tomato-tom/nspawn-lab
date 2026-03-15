@@ -1,4 +1,4 @@
-# misc/show_network_info.sh
+# snippets/show_network_info.sh
 # 使用例：
 # ipa           # 全インターフェースのアドレス情報
 # ipa eth0      # eth0のアドレス情報

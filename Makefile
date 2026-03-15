@@ -10,7 +10,7 @@ PAW := $(BIN_DIR)/paw.sh
 SETUP_NSPAWN_SCRIPT := $(LIB_DIR)/setup_nspawn.sh
 
 # Library
-LIB_MAP := misc/map_functions.sh
+LIB_MAP := snippets/map_functions.sh
 LIB_CONTAINER := lib/container/container.sh
 LIB_BRIDGE := lib/vnet/bridge.sh
 LIB_VETH := lib/vnet/veth.sh

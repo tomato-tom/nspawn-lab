@@ -1,5 +1,5 @@
 #!/bin/bash
-# misc/map_functions.sh
+# snippets/map_functions.sh
 # シェルスクリプトの関数の関連性を見やすく表示
 # /lib/container/container.shに最適化
 
