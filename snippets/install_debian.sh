@@ -7,7 +7,7 @@
 # 4. 再起動
 
 # 設定
-HOST_NAME="${HOS_TNAME:-debian}"
+HOST_NAME="${HOST_NAME:-debian}"
 TIME_ZONE="${TIME_ZONE:-UTC}"
 LOCALE="${LOCALE:-C.UTF-8}"
 PROXY="http://192.168.10.102:3142"
@@ -73,8 +73,13 @@ parted -s "$DISK" mkpart primary fat32 1MiB 512MiB
 parted -s "$DISK" set 1 esp on
 parted -s "$DISK" mkpart primary ext4 512MiB 100%
 
-EFI_PART="${DISK}1"
-ROOT_PART="${DISK}2"
+if [[ "$DISK" =~ nvme ]]; then
+    EFI_PART="${DISK}p1"
+    ROOT_PART="${DISK}p2"
+else
+    EFI_PART="${DISK}1"
+    ROOT_PART="${DISK}2"
+fi
 
 # フォーマット
 echo "Format disks: $DISK"
@@ -89,7 +94,6 @@ mount "$ROOT_PART" "$workdir"
 echo "mount: $EFI_PART on $workdir/boot"
 mkdir -p "$workdir/boot"
 mount "$EFI_PART" "$workdir/boot"
-#/bootにしてみる
 sleep 1
 
 # debootstrap実行
@@ -104,6 +108,8 @@ fi
 ROOT_UUID=$(blkid -s UUID -o value $ROOT_PART)
 EFI_UUID=$(blkid -s UUID -o value $EFI_PART)
 
+export ROOT_UUID EFI_UUID HOST_NAME TIME_ZONE LOCALE
+
 # システム設定
 echo "chroot new rootfs"
 mount --bind /dev "$workdir"/dev
@@ -111,7 +117,13 @@ mount --bind /proc "$workdir"/proc
 mount --bind /sys "$workdir"/sys
 mount -t efivarfs none "$workdir"/sys/firmware/efi/efivars 
 
-chroot "$workdir" /bin/bash <<'EOF'
+
+chroot "$workdir" /bin/bash <<EOF
+
+# ホスト名、ロケール、タイムゾーン
+echo "$HOST_NAME" > /etc/hostname
+echo "$LOCALE" > /etc/locale.conf
+ln -sf "/usr/share/zoneinfo/$TIME_ZONE" /etc/localtime
 
 # apt sources
 cat > /etc/apt/sources.list << APT
@@ -133,6 +145,20 @@ cp "$latest_initrd" /boot/initrd.img
 # systemd-bootのインストール
 bootctl install
 
+# ブートエントリ作成
+mkdir -p /boot/loader/entries
+cat > /boot/loader/entries/debian.conf << ENTRY
+title   Debian GNU/Linux
+linux   /vmlinuz
+initrd  /initrd.img
+options root=UUID="$ROOT_UUID" rw
+ENTRY
+
+cat > /boot/loader/loader.conf << LOADER
+default debian.conf
+timeout 3
+LOADER
+
 # カーネル更新フック（/vmlinuz,/initrd.imgを常に最新に）
 mkdir -p /etc/kernel/postinst.d
 cat > /etc/kernel/postinst.d/update-systemd-boot << 'HOOK'
@@ -141,36 +167,23 @@ version="$1"
 esp_path="/boot"  # ESPのマウントポイント
 
 # ESPに最新のカーネルとinitrdをコピー
-cp "vmlinuz-${version}" "${esp_path}/vmlinuz"
-cp "initrd.img-${version}" "${esp_path}/initrd.img"
+cp "/boot/vmlinuz-${version}" "${esp_path}/vmlinuz"
+cp "/boot/initrd.img-${version}" "${esp_path}/initrd.img"
 HOOK
 
 chmod +x /etc/kernel/postinst.d/update-systemd-boot
+
+# fstab
+cat > /etc/fstab << FSTAB
+# /etc/fstab
+UUID="$ROOT_UUID" /      ext4 defaults,noatime 0 1
+UUID="$EFI_UUID"  /boot  vfat defaults         0 2
+FSTAB
 
 # 初期rootパスワード設定
 echo root:root | chpasswd
 EOF
 
-# ブートエントリ作成
-mkdir -p "$workdir"/boot/loader/entries
-cat > "$workdir"/boot/loader/entries/debian.conf << ENTRY
-title   Debian GNU/Linux
-linux   /vmlinuz
-initrd  /initrd.img
-options root=UUID=$ROOT_UUID rw
-ENTRY
-
-cat > "$workdir"/boot/loader/loader.conf << LOADER
-default debian.conf
-timeout 3
-LOADER
-
-# fstab
-cat > "$workdir"/etc/fstab << FSTAB
-# /etc/fstab
-UUID=$ROOT_UUID /      ext4 defaults,noatime 0 1
-UUID=$EFI_UUID  /boot  vfat defaults         0 2
-FSTAB
 
 echo "=== Installation complete ==="
 echo "Disk: $DISK"
