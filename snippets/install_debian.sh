@@ -116,6 +116,8 @@ mount --bind /dev "$workdir"/dev
 mount --bind /proc "$workdir"/proc
 mount --bind /sys "$workdir"/sys
 mount -t efivarfs none "$workdir"/sys/firmware/efi/efivars 
+# 環境によりefivarsのマウントに失敗した場合、bootctlも失敗
+# その場合は手動(スクリプト)コピーする方法もあるらしい
 
 
 chroot "$workdir" /bin/bash <<EOF
@@ -136,11 +138,9 @@ APT
 apt update
 apt install -y linux-image-amd64 systemd-boot
 
-# パーティションにsystemd-boot用のファイル作成
-latest_vmlinuz=$(ls /boot/vmlinuz-* | grep -v "vmlinuz.old$" | sort -V | tail -n1)
-latest_initrd=$(ls /boot/initrd.img-* | grep -v "initrd.img.old$" | sort -V | tail -n1)
-cp "$latest_vmlinuz" /boot/vmlinuz
-cp "$latest_initrd" /boot/initrd.img
+# efiパーティションにsystemd-boot用のファイル作成
+cp /boot/vmlinuz-* /boot/vmlinuz
+cp /boot/initrd.img-* /boot/initrd.img
 
 # systemd-bootのインストール
 bootctl install
@@ -163,12 +163,12 @@ LOADER
 mkdir -p /etc/kernel/postinst.d
 cat > /etc/kernel/postinst.d/update-systemd-boot << 'HOOK'
 #!/bin/bash
-version="$1"
+version="\$1"
 esp_path="/boot"  # ESPのマウントポイント
 
 # ESPに最新のカーネルとinitrdをコピー
-cp "/boot/vmlinuz-${version}" "${esp_path}/vmlinuz"
-cp "/boot/initrd.img-${version}" "${esp_path}/initrd.img"
+cp "/boot/vmlinuz-\${version}" "\${esp_path}/vmlinuz"
+cp "/boot/initrd.img-\${version}" "\${esp_path}/initrd.img"
 HOOK
 
 chmod +x /etc/kernel/postinst.d/update-systemd-boot
@@ -179,6 +179,19 @@ cat > /etc/fstab << FSTAB
 UUID="$ROOT_UUID" /      ext4 defaults,noatime 0 1
 UUID="$EFI_UUID"  /boot  vfat defaults         0 2
 FSTAB
+
+# 初期ネットワーク設定
+cat > /etc/systemd/network/20-wired.network << NET
+[Match]
+Name=en*
+
+[Network]
+DHCP=yes
+NET
+
+# systemctl enable同様にsystemctlなしで
+ln -s /lib/systemd/system/systemd-networkd.service \
+    /etc/systemd/system/multi-user.target.wants/systemd-networkd.service
 
 # 初期rootパスワード設定
 echo root:root | chpasswd
