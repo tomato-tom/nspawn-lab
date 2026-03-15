@@ -105,6 +105,7 @@ else
     debootstrap bookworm "$workdir"
 fi
 
+# chrootの準備
 ROOT_UUID=$(blkid -s UUID -o value $ROOT_PART)
 EFI_UUID=$(blkid -s UUID -o value $EFI_PART)
 
@@ -119,8 +120,7 @@ mount -t efivarfs none "$workdir"/sys/firmware/efi/efivars
 # 環境によりefivarsのマウントに失敗した場合、bootctlも失敗
 # その場合は手動(スクリプト)コピーする方法もあるらしい
 
-
-chroot "$workdir" /bin/bash <<EOF
+chroot "$workdir" /bin/bash <<'EOF'
 
 # ホスト名、ロケール、タイムゾーン
 echo "$HOST_NAME" > /etc/hostname
@@ -163,12 +163,12 @@ LOADER
 mkdir -p /etc/kernel/postinst.d
 cat > /etc/kernel/postinst.d/update-systemd-boot << 'HOOK'
 #!/bin/bash
-version="\$1"
+version="$1"
 esp_path="/boot"  # ESPのマウントポイント
 
 # ESPに最新のカーネルとinitrdをコピー
-cp "/boot/vmlinuz-\${version}" "\${esp_path}/vmlinuz"
-cp "/boot/initrd.img-\${version}" "\${esp_path}/initrd.img"
+cp "/boot/vmlinuz-${version}" "${esp_path}/vmlinuz"
+cp "/boot/initrd.img-${version}" "${esp_path}/initrd.img"
 HOOK
 
 chmod +x /etc/kernel/postinst.d/update-systemd-boot

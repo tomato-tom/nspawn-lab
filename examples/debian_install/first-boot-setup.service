@@ -1,0 +1,15 @@
+# /etc/systemd/system/first-boot-setup.service
+[Unit]
+Description=First boot setup
+After=network.target
+ConditionPathExists=/usr/local/bin/first-boot-setup.sh
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/first-boot-setup.sh
+ExecStartPost=/bin/rm /usr/local/bin/first-boot-setup.sh
+ExecStartPost=/bin/systemctl disable first-boot-setup.service
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
