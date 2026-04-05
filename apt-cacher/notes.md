@@ -1,4 +1,13 @@
-# APT Cacherのスクリプト
+# APT Cacher
+
+## systemd設定ファイル
+
+ホスト
+br0.netdev
+br0.network
+
+コンテナ
+80-container-host0.network
 
 ## キャッシュ自動更新
 
