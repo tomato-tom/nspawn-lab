@@ -72,7 +72,7 @@ container
 
 ブリッジの作成とネットワーク設定をnmcliで
 ```
-# 既存の接続を削除
+# 既存のブリッジを削除
 ip link show br0 &&
     nmcli connection delete br0
 
@@ -115,8 +115,7 @@ sudo nft add rule inet nat postrouting ip saddr 10.0.0.0/24 oifname wlp3s0 masqu
 
 コンテナ内のネットワーク設定は`ip addr`で
 例として、
-`arch-01`コンテナにIPアドレス`10.0.0.101/24`
-デフォルト・ルートをブリッジ`10.0.0.1`に向ける
+`arch-01`コンテナにIPアドレス`10.0.0.101/24` 、デフォルト・ルートをブリッジ`10.0.0.1`に向ける
 ```
 sudo systemd-nspawn -M arch-01 --network-bridge=br0 --boot
 
@@ -125,8 +124,11 @@ ip addr add 10.0.0.101/24 dev host0
 ip link set host0 up
 ip route add default via 10.0.0.1
 ```
+> 一時的な設定、コンテナ停止でクリア
+> 以上とりあえずネットワークつなげる
+> 実運用では'policy drop'のfilterテーブルで必要な経路に絞ればいいだろう
 
-コンテナのDNSはデフォルトつながることも多いけど、必要ならば
+コンテナのDNSはデフォルトつながることも多いけど必要ならば
 ```
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
 ```
@@ -143,7 +145,4 @@ sudo nft add chain inet nat prerouting { type nat hook prerouting priority dstna
 # container: 80
 sudo nft add rule inet nat prerouting iifname wlp3s0 tcp dport 8080 dnat ip to 10.0.0.101:80
 ```
-
-> 以上とりあえずネットワークつなげる
-> 実運用では'policy drop'のfilterテーブルで必要な経路に絞ればいいだろう
 
