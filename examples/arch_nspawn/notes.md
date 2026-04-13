@@ -181,3 +181,14 @@ Address=10.0.0.2/24
 Gateway=10.0.0.1
 ```
 
+## 2026-04-13コンテナ
+
+```
+NAME           
+arch-01        pacoloco
+arch-02        python uv
+arch-base      
+trixie-minbase 
+trixie1        
+```
+
