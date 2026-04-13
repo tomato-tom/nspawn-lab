@@ -39,3 +39,16 @@ Server = http://localhost:9129/repo/archlinux/$repo/os/$arch
 > 例:
 >   Server = http://pacoloco.local:9129/repo/archlinux/$repo/os/$arch
 
+
+何か試しにインストール
+```
+pacman -Syyu
+pacman -S git curl
+```
+# キャッシュが作られたか確認
+ls -l /var/cache/pacoloco/pkgs/archlinux/core/os/x86_64/
+
+# pacoloco のログ
+journalctl -u pacoloco
+```
+
