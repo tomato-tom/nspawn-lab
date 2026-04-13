@@ -146,3 +146,38 @@ sudo nft add chain inet nat prerouting { type nat hook prerouting priority dstna
 sudo nft add rule inet nat prerouting iifname wlp3s0 tcp dport 8080 dnat ip to 10.0.0.101:80
 ```
 
+## 設定の永続化
+
+### ホスト
+
+ネットワーク設定はnmcliでOK
+
+コンテナをsystemdサービス化
+```
+sudo mkdir -p /etc/systemd/nspawn
+```
+
+/etc/systemd/nspawn/arch-01.nspawn
+```
+[Exec]
+Boot=yes
+
+[Network]
+Bridge=br0
+VirtualEthernet=yes
+```
+
+### コンテナ
+
+コンテナ内はsystemd-networkdで
+
+/etc/systemd/network/01-host0.network
+```
+[Match]
+Name=host0
+
+[Network]
+Address=10.0.0.2/24
+Gateway=10.0.0.1
+```
+
