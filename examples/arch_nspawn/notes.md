@@ -46,7 +46,7 @@ sudo machinectl rename trixie-03 app
 コンテナを削除
 ```
 sudo machinectl stop nginx
-sudo machinectl remove nginy
+sudo machinectl remove nginx
 ```
 
 
@@ -113,7 +113,7 @@ sudo nft add rule inet nat postrouting ip saddr 10.0.0.0/24 oifname wlp3s0 masqu
 
 ## コンテナ
 
-コンテナ内のネットワーク設定は`ip addr`で
+コンテナ内のネットワーク設定はとりあえず`iproute2`で
 例として、
 `arch-01`コンテナにIPアドレス`10.0.0.101/24` 、デフォルト・ルートをブリッジ`10.0.0.1`に向ける
 ```
@@ -181,7 +181,7 @@ Address=10.0.0.2/24
 Gateway=10.0.0.1
 ```
 
-## 2026-04-13コンテナ
+## コンテナ
 
 ```
 NAME           
