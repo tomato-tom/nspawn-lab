@@ -1,6 +1,9 @@
 # Git Server
 
 lighttpd + git-http-backend でGitサーバー構築
+[How to set up a git server over HTTP](
+"https://redmine.lighttpd.net/projects/lighttpd/wiki/How_to_set_up_a_git_server_over_http(s)"
+)
 
 インストール
 ```bash
