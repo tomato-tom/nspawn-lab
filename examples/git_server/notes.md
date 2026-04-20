@@ -2,12 +2,13 @@
 
 lighttpd + git-http-backend でGitサーバー構築
 
-### 1. インストール
+インストール
 ```bash
 apt install lighttpd git
 ```
 
-### 2. lighttpd設定
+## lighttpd設定
+
 `/etc/lighttpd/lighttpd.conf`:
 ```conf
 server.document-root = "/var/www/html"
@@ -36,22 +37,21 @@ $HTTP["url"] =~ "^/git" {
 }
 ```
 
-### 3. サービス再起動
+サービス再起動
 ```bash
 service lighttpd restart
 ```
 
-### 4. リポジトリ作成
+## 動作確認
+
+テスト用のリポジトリ作成
 ```bash
 # ベアリポジトリ作成
 git init --bare /var/www/git/hello.git
 
 # 権限設定
 chown -R www-data:www-data /var/www/git
-```
 
-### 5. 動作確認
-```bash
 # クローン
 git clone http://localhost/git/hello.git
 cd hello
