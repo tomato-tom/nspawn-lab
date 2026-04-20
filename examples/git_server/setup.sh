@@ -49,6 +49,7 @@ wait_boot git-server || echo "Warning: git-server boot timeout"
 
 echo "Configuring git-server network..."
 machinectl shell git-server /bin/bash -c '
+    hostnamectl hostname git-server
     ip addr add 10.0.0.2/28 dev host0
     ip link set host0 up
     ip route add default via 10.0.0.1
@@ -76,6 +77,7 @@ wait_boot client-1 || echo "Warning: client-1 boot timeout"
 
 echo "Configuring client-1 network..."
 machinectl shell client-1 /bin/bash -c '
+    hostnamectl hostname client-1
     ip addr add 10.0.0.3/28 dev host0
     ip link set host0 up
     ip route add default via 10.0.0.1
