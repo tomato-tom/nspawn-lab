@@ -150,7 +150,7 @@ sudo nft add rule inet nat prerouting iifname wlp3s0 tcp dport 8080 dnat ip to 1
 
 ### ホスト
 
-ネットワーク設定はnmcliでOK
+永続的なネットワーク設定はnmcliでOK
 
 コンテナをsystemdサービス化
 ```
@@ -167,21 +167,29 @@ Bridge=br0
 VirtualEthernet=yes
 ```
 
-### コンテナ
+### コンテナ内のネットワーク設定
 
-コンテナ内はsystemd-networkdで
-
-/etc/systemd/network/01-host0.network
+iproute2でやる場合
 ```
+ip address add 10.0.0.2/24 dev host0
+ip link set host0 up
+ip route add default via 10.0.0.1
+```
+> 一時的なネットワーク設定
+
+systemd-networkdでやる場合、永続的な設定例
+```
+cat <<EOF > /etc/systemd/network/01-host0.network
 [Match]
 Name=host0
 
 [Network]
 Address=10.0.0.2/24
 Gateway=10.0.0.1
+EOF
 ```
 
-## コンテナ
+## コンテナ用途
 
 ```
 NAME           
@@ -189,6 +197,33 @@ arch-01        pacoloco
 arch-02        python uv
 arch-base      
 trixie-minbase 
-trixie1        
+trixie-01
+trixie-02
+```
+
+その他アイディア
+- chrony
+- dnsmasq
+- pihole
+- prometheus
+- squid
+- git lighttpd
+- rsyslog
+- nextcloud
+- NFS
+- ansible
+
+
+## ファイル
+
+```
+bridge_nat.sh
+    指定したブリッジのネットワークを外部通信できるようにNAT
+create_bridge.sh
+    ブリッジ作成
+pacoloco.md
+    Archlinux用のパッケージキャッシャー
+setup.sh
+    複数コンテナをセットアップ
 ```
 

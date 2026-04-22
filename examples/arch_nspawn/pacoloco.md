@@ -1,6 +1,6 @@
 # pacoloco
 
-現在は標準パッケージにある
+現在はpacman標準パッケージにある
 ```
 sudo pacman -S pacoloco
 ```
@@ -52,7 +52,7 @@ ls -l /var/cache/pacoloco/pkgs/archlinux/core/os/x86_64/
 journalctl -u pacoloco
 ```
 
-キャッシュをためる
+回線安定時に、使いそうなパッケージをあらかじめダウンロード
 ```
 pacman -Syw --noconfirm \
   git \
@@ -60,7 +60,6 @@ pacman -Syw --noconfirm \
   arch-install-scripts \
   debootstrap \
   systemd-container \
-  btrfs-progs \
   dosfstools \
   e2fsprogs \
   openssh \
