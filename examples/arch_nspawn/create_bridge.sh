@@ -1,5 +1,5 @@
 #!/bin/bash
-# nmcliでブリッジ作成とIPアドレス設定
+# ブリッジ作成とIPアドレス設定
 
 # デフォルト値
 BRIDGE="${1:-br0}"
@@ -15,17 +15,15 @@ IP_ADDRESS="10.0.${NUM}.1/24"
 ip link show "$BRIDGE" > /dev/null &&
     nmcli connection delete "$BRIDGE"
 
-# ブリッジ作成
-nmcli connection add type bridge ifname "$BRIDGE" con-name "$BRIDGE"
+# ブリッジ作成、グループ100に
+sudo ip link add "$BRIDGE" type bridge
+sudo ip link set "$BRIDGE" group 100
 
 # IPアドレス設定
-nmcli connection modify "$BRIDGE" ipv4.addresses "$IP_ADDRESS"
-nmcli connection modify "$BRIDGE" ipv4.method manual
-
-# 有効化
-nmcli connection up "$BRIDGE"
+sudo ip addr add "$IP_ADDRESS" dev "$BRIDGE"
+sudo ip link set "$BRIDGE" up
 sleep 1
 
 # 結果表示
-ip -br addr show "$BRIDGE"
+ip -br addr show group 100
 
