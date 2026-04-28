@@ -66,6 +66,8 @@ pacman -Syw --noconfirm \
   sudo \
   vim \
   base \
-  base-devel
+  base-devel \
+  linux \
+  linux-firmware
 ```
 
