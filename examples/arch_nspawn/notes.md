@@ -30,14 +30,14 @@ sudo debootstrap \
 sudo systemd-nspawn -M trixie-base /bin/bash -c 'echo "root:root" | chpasswd'
 ```
 
-コンテナをクローン
+クローン
 ```
 sudo machinectl clone trixie-base trixie-01
 sudo machinectl clone trixie-base trixie-02
 sudo machinectl clone trixie-base trixie-03
 ```
 
-コンテナのリネーム例
+リネーム例
 ```
 sudo machinectl rename trixie-01 nginx
 sudo machinectl rename trixie-02 mysql
@@ -71,7 +71,7 @@ container
   arch-03 10.0.0.103/24
 ```
 
-ブリッジの作成とネットワーク設定をnmcliで
+ブリッジの作成とネットワーク設定をnmcliでやる場合
 ```
 # 既存のブリッジを削除
 ip link show br0 &&
@@ -116,7 +116,7 @@ sudo nft add rule inet nat postrouting ip saddr 10.0.0.0/24 oifname wlp3s0 masqu
 
 コンテナ内のネットワーク設定はとりあえず`iproute2`で
 例として、
-`arch-01`コンテナにIPアドレス`10.0.0.101/24` 、デフォルト・ルートをブリッジ`10.0.0.1`に向ける
+`arch-01`コンテナにIPアドレス`10.0.0.101/24` 、デフォルト・ルートをブリッジbr0`10.0.0.1`に向ける
 ```
 sudo systemd-nspawn -M arch-01 --network-bridge=br0 --boot
 
@@ -127,7 +127,7 @@ ip route add default via 10.0.0.1
 ```
 > 一時的な設定、コンテナ停止でクリア
 > 以上とりあえずネットワークつなげる
-> 実運用では'policy drop'のfilterテーブルで必要な経路に絞ればいいだろう
+> 実運用では'policy drop'のfilterテーブルで必要な経路のみに絞ればいいだろう
 
 コンテナのDNSはデフォルトつながることも多いけど必要ならば
 ```
@@ -138,7 +138,7 @@ echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
 コンテナのサービスをホストを通じて公開
 ```
-# natテーブルのチェーン作成
+# natテーブルのpreroutingチェーン作成
 sudo nft add chain inet nat prerouting { type nat hook prerouting priority dstnat\; policy accept\; }
 
 # DNAT
@@ -198,8 +198,8 @@ arch-01        pacoloco
 arch-02        python uv
 arch-base      
 trixie-minbase 
-trixie-01
-trixie-02
+trixie-01      apt-cacher-ng
+trixie-02      git lighttpd
 ```
 
 その他アイディア
@@ -208,7 +208,6 @@ trixie-02
 - pihole
 - prometheus
 - squid
-- git lighttpd
 - rsyslog
 - nextcloud
 - NFS
