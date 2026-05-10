@@ -38,6 +38,7 @@ Server = http://localhost:9129/repo/archlinux/$repo/os/$arch
 > 他のクライアントも同様に
 > 例:
 >   Server = http://pacoloco.local:9129/repo/archlinux/$repo/os/$arch
+> ヒアドキュメント使う場合は変数展開に注意
 
 
 何か試しにインストール
