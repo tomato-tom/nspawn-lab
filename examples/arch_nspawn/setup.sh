@@ -22,6 +22,9 @@
 #         trixie-02
 #             ip_address: 10.0.1.3/24
 #             role: none
+#         resolute-01
+#             ip_address: 10.0.1.4/24
+#             role: none
 
 if ping -c 1 -w 1 1.1.1.1 >/dev/null; then
     echo "Network connection OK"
@@ -99,4 +102,8 @@ run_container trixie-01 br1 "10.0.1.2/24" "10.0.1.1"
 
 # trixie-02
 run_container trixie-02 br1 "10.0.1.3/24" "10.0.1.1"
+
+# resolute-01
+run_container resolute-01 br1 "10.0.1.4/24" "10.0.1.1"
+sudo machinectl shell resolute-01 /bin/bash -c 'echo "nameserver 1.1.1.1" > /etc/resolv.conf'
 
