@@ -18,6 +18,7 @@ ip link show "$BRIDGE" > /dev/null &&
 # ブリッジ作成、グループ100に
 sudo ip link add "$BRIDGE" type bridge
 sudo ip link set "$BRIDGE" group 100
+sleep 1
 
 # IPアドレス設定
 sudo ip addr add "$IP_ADDRESS" dev "$BRIDGE"

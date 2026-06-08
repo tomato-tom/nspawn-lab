@@ -40,17 +40,18 @@ fi
 ./create_bridge.sh br0
 ./create_bridge.sh br1
 
-if ip -br l | grep enp; then
-    # USB テザリング
-    wanif="$(ip -br l | grep enp | cut -d' ' -f1)"   # USB テザリングなどWANインターフェースが"enp..."の場合
-    WAN_IF="$wanif" NETWORK="10.0.0.0/24" FLUSH=true ./bridge_nat.sh # br0
-    WAN_IF="$wanif" NETWORK="10.0.1.0/24" FLUSH=false ./bridge_nat.sh # br1
+if ip route show default | grep -E 'enp|ens'; then
+    # USB テザリングなどWANインターフェースが"en..."の場合
+    wanif="$(ip route show default | grep -E 'enp|ens' | cut -d' ' -f5)"
+elif ip route show default | grep wlp; then
+    # Wi-fi テザリングなど"wlp..."の場合
+    wanif="$(ip route show default | grep wlp | cut -d' ' -f5)"
 else
-    # Wi-Fi テザリング
-    wanif="wlp3s0"        # Wi-fi テザリングなど"wlp..."の場合
-    NETWORK="10.0.0.0/24" FLUSH=true ./bridge_nat.sh # br0
-    NETWORK="10.0.1.0/24" FLUSH=false ./bridge_nat.sh # br1
+    echo "default route not found"
+    exit 1
 fi
+WAN_IF="$wanif" NETWORK="10.0.0.0/24" FLUSH=true ./bridge_nat.sh # br0
+WAN_IF="$wanif" NETWORK="10.0.1.0/24" FLUSH=false ./bridge_nat.sh # br1
 
 # ポート転送
 sudo nft add chain inet nat prerouting { type nat hook prerouting priority dstnat\; policy accept\; }
@@ -90,6 +91,10 @@ run_container() {
         ip route add default via $gateway
     "
 }
+
+# 実行中のコンテナあれば一旦停止
+machinectl list --no-legend | awk '$2 == "container" {print $1}' | xargs -r sudo machinectl stop
+sleep 1
 
 # arch-01
 run_container arch-01 br0 "10.0.0.2/24" "10.0.0.1"
