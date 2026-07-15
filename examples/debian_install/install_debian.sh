@@ -8,7 +8,6 @@
 # 4. 再起動
 #
 # legasy bios版は？
-# 多コアマシンでのdebootstrapの並列ビルド？
 
 # 設定
 HOST_NAME="${HOST_NAME:-debian}"
@@ -32,17 +31,17 @@ workdir="/dev/shm/rootfs"
 cleanup() {
     # 既存のパーティションをアンマウント
     for part in $(lsblk -ln -o NAME "$DISK" | grep -v "^$(basename "$DISK")\$"); do
-        umount "/dev/$part" 2>/dev/null || true
+        umount "/dev/$part" 2>/dev/null
     done
 
     sleep 1
 
     if [ -d "$workdir" ] && mountpoint -q "$workdir" 2>/dev/null; then
         echo "Unmounting $workdir..."
-        umount -R "$workdir" 2>/dev/null || true
+        umount -R "$workdir" 2>/dev/null
     fi
     
-    [ -d "$workdir" ] && rmdir "$workdir" 2>/dev/null || true
+    [ -d "$workdir" ] && rmdir "$workdir" 2>/dev/null
 }
 
 cleanup
@@ -58,7 +57,7 @@ else
 fi
 
 # パーティション情報を再読み込み
-partprobe "$DISK" 2>/dev/null || true
+partprobe "$DISK" 2>/dev/null
 sleep 1
 
 # 依存コマンドチェック
@@ -205,4 +204,3 @@ EOF
 echo "=== Installation complete ==="
 echo "Disk: $DISK"
 echo "Hostname: $HOST_NAME"
-exit 0
