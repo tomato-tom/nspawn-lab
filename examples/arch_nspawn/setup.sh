@@ -22,7 +22,7 @@
 #     container:
 #         trixie-01
 #             ip_address: 10.0.1.2/24
-#             role: none
+#             role: ollama
 #         trixie-02
 #             ip_address: 10.0.1.3/24
 #             role: none
