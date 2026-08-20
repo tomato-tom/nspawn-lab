@@ -22,6 +22,7 @@
 #     container:
 #         trixie-01
 #             ip_address: 10.0.1.2/24
+#             mount: /mnt/strage/ollama_models:/usr/share/ollama/.ollama/models
 #             role: ollama
 #         trixie-02
 #             ip_address: 10.0.1.3/24
@@ -54,6 +55,7 @@ else
     echo "default route not found"
     exit 1
 fi
+
 WAN_IF="$wanif" NETWORK="10.0.0.0/24" FLUSH=true ./bridge_nat.sh # br0
 WAN_IF="$wanif" NETWORK="10.0.1.0/24" FLUSH=false ./bridge_nat.sh # br1
 
@@ -77,15 +79,34 @@ run_container() {
     local bridge="$2"
     local ip_address="$3"
     local gateway="$4"
+    local mount="$5"
+
+    # 基本コマンドを配列で定義
+    local cmd=(
+        sudo systemd-nspawn
+        -M "$name"
+        --network-bridge="$bridge"
+        --boot
+    )
+
+    # オプションが存在すれば追加
+    if [ -n "$mount" ]; then
+        cmd+=(--bind="$mount")
+    fi
 
     # tmux windowでバックグラウンド起動
-    tmux new-window -d -n "$name" "sudo systemd-nspawn -M $name --network-bridge=$bridge --boot"
+    tmux new-window -d -n "$name" "${cmd[@]}"
 
     # 起動完了チェック
     for i in {1..10}; do
         sleep 1
         echo "check $i"
         sudo machinectl shell "$name" /bin/pwd && break
+
+        if [ $i -eq 10 ]; then
+            echo "$name hasn't run yet"
+            exit
+        fi
     done
 
     # コンテナ内ネットワーク設定
@@ -107,7 +128,7 @@ run_container arch-01 br0 "10.0.0.2/24" "10.0.0.1"
 run_container arch-02 br0 "10.0.0.3/24" "10.0.0.1"
 
 # trixie-01
-run_container trixie-01 br1 "10.0.1.2/24" "10.0.1.1"
+run_container trixie-01 br1 "10.0.1.2/24" "10.0.1.1" "/mnt/strage/ollama_models:/usr/share/ollama/.ollama/models"
 
 # trixie-02
 run_container trixie-02 br1 "10.0.1.3/24" "10.0.1.1"
