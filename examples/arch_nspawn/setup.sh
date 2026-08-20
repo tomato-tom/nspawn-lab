@@ -1,10 +1,14 @@
 #!/bin/bash
 
-# 追加のオプション
+# 追加するかも
 # - コンテナを全部停止
-# - コンテナ起動時にtmuxをオプションにして、デフォルトはバックグラウンド起動
+# - 設定ファイル
+# - ollamaのポート転送
+# Ansibleでやる？
 
 # コンテナのセットアップ
+# MBA(Wifiやテザリングのラップトップ向け 
+#
 # br0:
 #     network: 10.0.0.0/24
 #     ip_address: 10.0.0.1/24
@@ -68,7 +72,6 @@ host_port=9129
 guest_port=9129
 
 sudo nft add rule inet nat prerouting iifname "$wanif" tcp dport "$host_port" dnat ip to "${ipaddr}:${guest_port}"
-sudo nft list ruleset
 
 # -----------------
 # コンテナ起動
@@ -105,7 +108,7 @@ run_container() {
 
         if [ $i -eq 10 ]; then
             echo "$name hasn't run yet"
-            exit
+            return 1
         fi
     done
 
