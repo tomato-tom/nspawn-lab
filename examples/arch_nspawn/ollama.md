@@ -102,3 +102,32 @@ root@trixie-01:~# grep -rI "qwen" /usr/share/ollama
 /usr/share/ollama/.ollama/models/blobs/sha256-b14c6eab49f986e99b2daf9cedac5183c74d4f5ce2585ebb52b8492778adec39:{"model_format":"gguf","model_family":"qwen35","model_families":["qwen35"],"model_type":"873.44M","file_type":"Q8_0","renderer":"qwen3.5","parser":"qwen3.5","requires":"0.17.1","architecture":"amd64","os":"linux","rootfs":{"type":"layers","diff_ids":["sha256:afb707b6b8fac6e475acc42bc8380fc0b8d2e0e4190be5a969fbf62fcc897db5","sha256:9be69ef463066202c1b1bd299aaf42bad370a01ba4b40d293617859720776c17","sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff"]}}
 ```
 
+```
+root@trixie-01:~# cat /usr/share/ollama/.ollama/models/manifests/registry.ollama.ai/library/qwen3.5/0.8b | jq .
+{
+  "schemaVersion": 2,
+  "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+  "config": {
+    "mediaType": "application/vnd.docker.container.image.v1+json",
+    "digest": "sha256:b14c6eab49f986e99b2daf9cedac5183c74d4f5ce2585ebb52b8492778adec39",
+    "size": 476
+  },
+  "layers": [
+    {
+      "mediaType": "application/vnd.ollama.image.model",
+      "digest": "sha256:afb707b6b8fac6e475acc42bc8380fc0b8d2e0e4190be5a969fbf62fcc897db5",
+      "size": 1036034688
+    },
+    {
+      "mediaType": "application/vnd.ollama.image.license",
+      "digest": "sha256:9be69ef463066202c1b1bd299aaf42bad370a01ba4b40d293617859720776c17",
+      "size": 11354
+    },
+    {
+      "mediaType": "application/vnd.ollama.image.params",
+      "digest": "sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff",
+      "size": 65
+    }
+  ]
+}
+```
