@@ -1,7 +1,9 @@
 #!/bin/bash
 
+host="$1"
+
 echo "root:root" | chpasswd
-hostnamectl hostname trixie-01
+hostnamectl hostname "$1"
 
 cat <<EOF > /etc/apt/sources.list
 deb http://deb.debian.org/debian trixie main

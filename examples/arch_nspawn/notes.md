@@ -198,8 +198,8 @@ arch-01        pacoloco
 arch-02        python uv
 arch-base      
 trixie-minbase 
-trixie-01      apt-cacher-ng
-trixie-02      git lighttpd
+trixie-01      ollama
+trixie-02      ansible
 ```
 
 その他アイディア
@@ -225,5 +225,7 @@ pacoloco.md
     Archlinux用のパッケージキャッシャー
 setup.sh
     複数コンテナをセットアップ
+update_all.sh
+    全ての作動中コンテナを更新
 ```
 

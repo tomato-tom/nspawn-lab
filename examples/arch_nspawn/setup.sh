@@ -30,7 +30,10 @@
 #             role: ollama
 #         trixie-02
 #             ip_address: 10.0.1.3/24
-#             role: none
+#             role: ansible controle
+#         trixie-03
+#             ip_address: 10.0.1.4/24
+#             role: ansible client
 #         resolute-01
 #             ip_address: 10.0.1.4/24
 #             role: none
@@ -135,6 +138,9 @@ run_container trixie-01 br1 "10.0.1.2/24" "10.0.1.1" "/mnt/strage/ollama_models:
 
 # trixie-02
 run_container trixie-02 br1 "10.0.1.3/24" "10.0.1.1"
+
+# trixie-03
+run_container trixie-03 br1 "10.0.1.4/24" "10.0.1.1"
 
 # resolute-01
 run_container resolute-01 br1 "10.0.1.4/24" "10.0.1.1"
