@@ -1,10 +1,10 @@
 # Ansible
-> qwen生成
+> qwen3.7 Plus
 
 ## 
 
 trixie-02 controle node
-
+trixie-02 client node
 
 Ansibleは、エージェント不要・SSH経由・YAML記述が特徴のIT自動化ツールです。設定管理、アプリデプロイ、インフラ構成の統一などに広く使われています。
 
