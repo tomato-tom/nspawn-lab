@@ -1,6 +1,9 @@
 # Arch Linuxでnspawn
 持ち運び用のラップトップ想定
 
+- 個別のスクリプト
+- Ansible
+
 ## コンテナ作成
 
 Archコンテナ作成
