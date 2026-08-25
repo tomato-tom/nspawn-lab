@@ -34,7 +34,7 @@
 #             role: ansible controle
 #         trixie-03
 #             ip_address: 10.0.1.5/24
-#             role: ansible client
+#             role: apt cacher
 #         resolute-01
 #             ip_address: 10.0.1.4/24
 #             role: none
