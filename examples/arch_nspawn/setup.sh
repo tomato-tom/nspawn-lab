@@ -5,6 +5,7 @@
 # - 設定ファイル
 # - ollamaのポート転送
 # Ansibleでやる？
+# ブリッジ設定もこれに含める
 
 # コンテナのセットアップ
 # MBA(Wifiやテザリングのラップトップ向け 
@@ -32,7 +33,7 @@
 #             ip_address: 10.0.1.3/24
 #             role: ansible controle
 #         trixie-03
-#             ip_address: 10.0.1.4/24
+#             ip_address: 10.0.1.5/24
 #             role: ansible client
 #         resolute-01
 #             ip_address: 10.0.1.4/24
@@ -140,7 +141,7 @@ run_container trixie-01 br1 "10.0.1.2/24" "10.0.1.1" "/mnt/strage/ollama_models:
 run_container trixie-02 br1 "10.0.1.3/24" "10.0.1.1"
 
 # trixie-03
-run_container trixie-03 br1 "10.0.1.4/24" "10.0.1.1"
+run_container trixie-03 br1 "10.0.1.5/24" "10.0.1.1"
 
 # resolute-01
 run_container resolute-01 br1 "10.0.1.4/24" "10.0.1.1"
