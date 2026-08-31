@@ -1,0 +1,55 @@
+{
+  "bridges": [
+    {
+      "name": "br0",
+      "id": 0,
+      "network": "10.0.0.0/24",
+      "gateway_ip": "10.0.0.1",
+      "port_forwards": [
+        {
+          "container_name": "arch-01",
+          "host_port": 9129,
+          "guest_port": 9129,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "name": "br1",
+      "id": 1,
+      "network": "10.0.1.0/24",
+      "gateway_ip": "10.0.1.1",
+      "port_forwards": []
+    }
+  ],
+  "containers": [
+    {
+      "name": "arch-01",
+      "bridge": "br0",
+      "ip_address": "10.0.0.2/24",
+      "role": "pacoloco",
+      "mount": null
+    },
+    {
+      "name": "arch-02",
+      "bridge": "br0",
+      "ip_address": "10.0.0.3/24",
+      "role": "python uv",
+      "mount": null
+    },
+    {
+      "name": "trixie-01",
+      "bridge": "br1",
+      "ip_address": "10.0.1.2/24",
+      "role": "ollama",
+      "mount": null
+    },
+    {
+      "name": "trixie-02",
+      "bridge": "br1",
+      "ip_address": "10.0.1.3/24",
+      "role": "ansible controle",
+      "mount": null
+    }
+  ]
+}

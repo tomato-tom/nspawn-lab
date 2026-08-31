@@ -1,35 +1,170 @@
 #!/bin/bash
 
-# 追加のオプション
-# - コンテナを全部停止
-# - コンテナ起動時にtmuxをオプションにして、デフォルトはバックグラウンド起動
+CONFIG_FILE="config.json"
 
-# コンテナのセットアップ
-# br0:
-#     network: 10.0.0.0/24
-#     ip_address: 10.0.0.1/24
-#     container:
-#         arch-01
-#             ip_address: 10.0.0.2/24
-#             port: 9129
-#             role: pacoloco
-#         arch-02
-#             ip_address: 10.0.0.3/24
-#             role: python uv
-# br1:
-#     network: 10.0.1.0/24
-#     ip_address: 10.0.1.1/24
-#     container:
-#         trixie-01
-#             ip_address: 10.0.1.2/24
-#             role: ollama
-#         trixie-02
-#             ip_address: 10.0.1.3/24
-#             role: none
-#         resolute-01
-#             ip_address: 10.0.1.4/24
-#             role: none
+# -------------------
+# 事前チェック
+# -------------------
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq is not installed."
+    exit 1
+fi
 
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Error: $CONFIG_FILE not found."
+    exit 1
+fi
+
+# -------------------
+# 関数定義
+# -------------------
+
+cleanup() {
+    echo "=== Starting Cleanup ==="
+
+    echo "Stopping all running containers..."
+    local containers
+    containers=$(sudo machinectl list --no-legend | awk '$2 == "container" {print $1}')
+    if [ -n "$containers" ]; then
+        echo "$containers" | xargs -r sudo machinectl stop
+        sleep 2
+    else
+        echo "No containers to stop."
+    fi
+
+    # 2. ブリッジの削除 (group 100 を対象)
+    echo "Deleting bridges in group 100..."
+    local bridges
+    bridges=$(ip -br link show group 100 | awk '{print $1}')
+    for br in $bridges; do
+        echo "Deleting bridge: $br"
+        sudo ip link del "$br" 2>/dev/null || true
+    done
+    sleep 1
+
+    # 3. nat tableクリア
+    echo "Deleting nftables table..."
+    sudo nft delete table inet nat
+    
+    echo "=== Cleanup Completed ==="
+}
+
+# ブリッジ作成関数
+create_bridge() {
+    local bridge_name="$1"
+    local ip_address="$2"
+    
+    echo "--- Creating Bridge: $bridge_name ($ip_address) ---"
+
+    # ブリッジ作成
+    sudo ip link add "$bridge_name" type bridge
+    sudo ip link set "$bridge_name" group 100
+    
+    # IP設定と有効化
+    sudo ip addr add "$ip_address" dev "$bridge_name"
+    sudo ip link set "$bridge_name" up
+    
+    sleep 1
+    echo "Bridge $bridge_name created and up."
+}
+
+# NAT設定関数
+setup_nat() {
+    local wan_if="$1"
+    local network="$2"
+    local flush="$3"
+    
+    echo "--- Setting up NAT for $network via $wan_if ---"
+    
+    # IPフォワーディング有効化
+    sudo sysctl -w net.ipv4.ip_forward=1 > /dev/null
+    
+    # テーブル作成
+    sudo nft add table inet nat
+    
+    # postroutingチェーンの作成
+    sudo nft add chain inet nat postrouting '{ type nat hook postrouting priority srcnat; policy accept; }'
+    
+    # preroutingチェーンの作成（ポートフォワード用・存在しない場合）
+    sudo nft add chain inet nat prerouting '{ type nat hook prerouting priority dstnat; policy accept; }'
+    
+    # SNATルール追加
+    sudo nft add rule inet nat postrouting ip saddr "$network" oifname "$wan_if" masquerade
+    
+    echo "NAT rule added for $network"
+}
+
+# コンテナ起動関数
+run_container() {
+    local name="$1"
+    local bridge="$2"
+    local ip_address="$3"
+    local gateway="$4"
+    local mount="$5"
+    local dns="$6"
+
+    echo "--- Starting Container: $name ---"
+
+    local cmd=(
+        sudo systemd-nspawn
+        -M "$name"
+        --network-bridge="$bridge"
+        --boot
+    )
+
+    if [ "$mount" != "null" ] && [ -n "$mount" ]; then
+        echo "  Binding mount: $mount"
+        cmd+=(--bind="$mount")
+    fi
+
+    # tmuxでバックグラウンド起動
+    tmux new-window -d -n "$name" "${cmd[@]}" 2>/dev/null || {
+        echo "Warning: tmux window '$name' might already exist or failed to create."
+    }
+
+    # 起動待ち
+    local started=false
+    for i in {1..5}; do
+        sleep 1
+        if sudo machinectl shell "$name" /bin/pwd < /dev/null; then
+            started=true
+            break
+        fi
+        echo "  Waiting for $name... ($i/5)"
+    done
+
+    if [ "$started" = false ]; then
+        echo "Error: $name failed to start within timeout."
+        return 1
+    fi
+
+    # ネットワーク設定
+    echo "  Configuring network: $ip_address via $gateway"
+    sudo machinectl shell "$name" /bin/bash -c "
+        ip addr add $ip_address dev host0
+        ip link set host0 up
+        ip route add default via $gateway
+    " < /dev/null
+    
+    # DNS設定
+    if [ "$dns" != "null" ] && [ -n "$dns" ]; then
+        echo "  Setting DNS: $dns"
+        sudo machinectl shell "$name" /bin/bash -c "
+            rm /etc/resolv.conf
+            echo 'nameserver $dns' > /etc/resolv.conf
+        " < /dev/null
+    fi
+    
+    echo "  Container $name ready."
+}
+
+# -------------------
+# メイン処理
+# -------------------
+cleanup
+#exit
+
+# ネットワーク確認
 if ping -c 1 -w 1 1.1.1.1 >/dev/null; then
     echo "Network connection OK"
 else
@@ -37,82 +172,79 @@ else
     exit 1
 fi
 
-# -------------------
-# ホストのネットワーク設定
-# -------------------
-# ブリッジ作成
-./create_bridge.sh br0
-./create_bridge.sh br1
-
+# WANインターフェース検出
+wanif=""
 if ip route show default | grep -E 'enp|ens'; then
-    # USB テザリングなどWANインターフェースが"en..."の場合
-    wanif="$(ip route show default | grep -E 'enp|ens' | cut -d' ' -f5)"
+    wanif="$(ip route show default | grep -E 'enp|ens' | head -n1 | cut -d' ' -f5)"
 elif ip route show default | grep wlp; then
-    # Wi-fi テザリングなど"wlp..."の場合
-    wanif="$(ip route show default | grep wlp | cut -d' ' -f5)"
+    wanif="$(ip route show default | grep wlp | head -n1 | cut -d' ' -f5)"
 else
-    echo "default route not found"
+    echo "Error: Could not detect WAN interface."
     exit 1
 fi
-WAN_IF="$wanif" NETWORK="10.0.0.0/24" FLUSH=true ./bridge_nat.sh # br0
-WAN_IF="$wanif" NETWORK="10.0.1.0/24" FLUSH=false ./bridge_nat.sh # br1
+echo "Detected WAN Interface: $wanif"
 
-# ポート転送
-sudo nft add chain inet nat prerouting { type nat hook prerouting priority dstnat\; policy accept\; }
-
-# br0 arch-01 pacoloco
-ipaddr="10.0.0.2"
-host_port=9129
-guest_port=9129
-
-sudo nft add rule inet nat prerouting iifname "$wanif" tcp dport "$host_port" dnat ip to "${ipaddr}:${guest_port}"
-sudo nft list ruleset
-
-# -----------------
-# コンテナ起動
-# -----------------
-
-run_container() {
-    local name="$1"
-    local bridge="$2"
-    local ip_address="$3"
-    local gateway="$4"
-
-    # tmux windowでバックグラウンド起動
-    tmux new-window -d -n "$name" "sudo systemd-nspawn -M $name --network-bridge=$bridge --boot"
-
-    # 起動完了チェック
-    for i in {1..10}; do
-        sleep 1
-        echo "check $i"
-        sudo machinectl shell "$name" /bin/pwd && break
+# ブリッジとNATの設定
+echo
+echo "=== Setting up Bridges and NAT ==="
+bridge_count=$(jq '.bridges | length' "$CONFIG_FILE")
+for (( i=0; i<bridge_count; i++ )); do
+    b_name=$(jq -r ".bridges[$i].name" "$CONFIG_FILE")
+    b_id=$(jq -r ".bridges[$i].id" "$CONFIG_FILE")
+    b_network=$(jq -r ".bridges[$i].network" "$CONFIG_FILE")
+    b_gateway=$(jq -r ".bridges[$i].gateway_ip" "$CONFIG_FILE")
+    b_flush=$(jq -r ".bridges[$i].flush_nat" "$CONFIG_FILE")
+    
+    # IPアドレス生成 (例: br0 -> 10.0.0.1/24)
+    b_ip="${b_gateway}/24"
+    
+    create_bridge "$b_name" "$b_ip"
+    setup_nat "$wanif" "$b_network" "$b_flush"
+    
+    # ポートフォワード設定
+    pf_count=$(jq ".bridges[$i].port_forwards | length" "$CONFIG_FILE")
+    for (( j=0; j<pf_count; j++ )); do
+        pf_container=$(jq -r ".bridges[$i].port_forwards[$j].container_name" "$CONFIG_FILE")
+        pf_host_port=$(jq -r ".bridges[$i].port_forwards[$j].host_port" "$CONFIG_FILE")
+        pf_guest_port=$(jq -r ".bridges[$i].port_forwards[$j].guest_port" "$CONFIG_FILE")
+        pf_proto=$(jq -r ".bridges[$i].port_forwards[$j].protocol" "$CONFIG_FILE")
+        
+        # コンテナIP取得
+        pf_ip=$(jq -r ".containers[] | select(.name == \"$pf_container\") | .ip_address" "$CONFIG_FILE" | cut -d'/' -f1)
+        
+        if [ -n "$pf_ip" ]; then
+            echo "  Adding Port Forward: $wanif:$pf_host_port -> $pf_ip:$pf_guest_port ($pf_proto)"
+            sudo nft add rule inet nat prerouting iifname "$wanif" "$pf_proto" dport "$pf_host_port" dnat ip to "${pf_ip}:${pf_guest_port}"
+        else
+            echo "  Warning: IP not found for container $pf_container"
+        fi
     done
+done
 
-    # コンテナ内ネットワーク設定
-    sudo machinectl shell "$name" /bin/bash -c "
-        ip addr add $ip_address dev host0
-        ip link set host0 up
-        ip route add default via $gateway
-    "
-}
+# コンテナの起動
+echo ""
+echo "=== Starting Containers ==="
 
-# 実行中のコンテナあれば一旦停止
-machinectl list --no-legend | awk '$2 == "container" {print $1}' | xargs -r sudo machinectl stop
-sleep 1
+set -x # debug
 
-# arch-01
-run_container arch-01 br0 "10.0.0.2/24" "10.0.0.1"
+container_count=$(jq '.containers | length' "$CONFIG_FILE")
+for (( i=0; i<container_count; i++ )); do
+    c_name=$(jq -r ".containers[$i].name" "$CONFIG_FILE")
+    c_bridge=$(jq -r ".containers[$i].bridge" "$CONFIG_FILE")
+    c_ip=$(jq -r ".containers[$i].ip_address" "$CONFIG_FILE")
+    c_mount=$(jq -r ".containers[$i].mount" "$CONFIG_FILE")
+    c_dns=$(jq -r ".containers[$i].dns // empty" "$CONFIG_FILE")
+    
+    # ゲートウェイ取得
+    c_gateway=$(jq -r ".bridges[] | select(.name == \"$c_bridge\") | .gateway_ip" "$CONFIG_FILE")
+    
+    run_container "$c_name" "$c_bridge" "$c_ip" "$c_gateway" "$c_mount" "$c_dns"
 
-# arch-02
-run_container arch-02 br0 "10.0.0.3/24" "10.0.0.1"
+    sleep 3 # debug
+done
 
-# trixie-01
-run_container trixie-01 br1 "10.0.1.2/24" "10.0.1.1"
+set +x # debug
 
-# trixie-02
-run_container trixie-02 br1 "10.0.1.3/24" "10.0.1.1"
-
-# resolute-01
-run_container resolute-01 br1 "10.0.1.4/24" "10.0.1.1"
-sudo machinectl shell resolute-01 /bin/bash -c 'echo "nameserver 1.1.1.1" > /etc/resolv.conf'
-
+echo ""
+echo "=== All Done ==="
+ip -br addr show group 100
