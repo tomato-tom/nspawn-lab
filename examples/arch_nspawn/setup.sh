@@ -26,6 +26,7 @@ cleanup() {
     local containers
     containers=$(sudo machinectl list --no-legend | awk '$2 == "container" {print $1}')
     if [ -n "$containers" ]; then
+        echo "$containers"
         echo "$containers" | xargs -r sudo machinectl stop
         sleep 2
     else
@@ -124,13 +125,14 @@ run_container() {
 
     # 起動待ち
     local started=false
-    for i in {1..5}; do
+    local retry
+    for retry in {1..5}; do
         sleep 1
-        if sudo machinectl shell "$name" /bin/pwd < /dev/null; then
+        if sudo machinectl shell "$name" /bin/pwd &>/dev/null; then
             started=true
             break
         fi
-        echo "  Waiting for $name... ($i/5)"
+        echo "  Waiting for $name... ($retry/5)"
     done
 
     if [ "$started" = false ]; then
@@ -144,7 +146,7 @@ run_container() {
         ip addr add $ip_address dev host0
         ip link set host0 up
         ip route add default via $gateway
-    " < /dev/null
+    " &>/dev/null
     
     # DNS設定
     if [ "$dns" != "null" ] && [ -n "$dns" ]; then
@@ -152,7 +154,7 @@ run_container() {
         sudo machinectl shell "$name" /bin/bash -c "
             rm /etc/resolv.conf
             echo 'nameserver $dns' > /etc/resolv.conf
-        " < /dev/null
+        " &>/dev/null
     fi
     
     echo "  Container $name ready."
@@ -162,7 +164,6 @@ run_container() {
 # メイン処理
 # -------------------
 cleanup
-#exit
 
 # ネットワーク確認
 if ping -c 1 -w 1 1.1.1.1 >/dev/null; then
@@ -225,7 +226,7 @@ done
 echo ""
 echo "=== Starting Containers ==="
 
-set -x # debug
+#set -x # debug
 
 container_count=$(jq '.containers | length' "$CONFIG_FILE")
 for (( i=0; i<container_count; i++ )); do
@@ -240,10 +241,10 @@ for (( i=0; i<container_count; i++ )); do
     
     run_container "$c_name" "$c_bridge" "$c_ip" "$c_gateway" "$c_mount" "$c_dns"
 
-    sleep 3 # debug
+    #sleep 3 # debug
 done
 
-set +x # debug
+#set +x # debug
 
 echo ""
 echo "=== All Done ==="
