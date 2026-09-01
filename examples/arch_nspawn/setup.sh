@@ -1,6 +1,9 @@
 #!/bin/bash
+# setup.sh
 
-CONFIG_FILE="config.json"
+# デフォルトの設定ファイルは、config.json
+# カスタム設定ファイルは引数で渡す
+CONFIG_FILE="${1:-config.json}"
 
 # -------------------
 # 事前チェック
@@ -226,8 +229,6 @@ done
 echo ""
 echo "=== Starting Containers ==="
 
-#set -x # debug
-
 container_count=$(jq '.containers | length' "$CONFIG_FILE")
 for (( i=0; i<container_count; i++ )); do
     c_name=$(jq -r ".containers[$i].name" "$CONFIG_FILE")
@@ -243,8 +244,6 @@ for (( i=0; i<container_count; i++ )); do
 
     #sleep 3 # debug
 done
-
-#set +x # debug
 
 echo ""
 echo "=== All Done ==="
