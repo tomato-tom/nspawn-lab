@@ -1,10 +1,13 @@
 #!/bin/bash
-# Debian systemd-boot インストールスクリプト 起動中のOSかライブ環境から指定ディスクにdebianをインストール
-# 試用例:
+# Debian systemd-boot インストールスクリプト
+# 起動中のOSかライブ環境から指定ディスクにdebianをインストール
+# 例:
 # 1. インストール先のマシンにUSBのISOライブ環境起動
 # 2. LAN内に配置してる場合はwgetなどでこのスクリプトを取得
 # 3. インストール: sudo ./install_debian.sh /dev/sdX
 # 4. 再起動
+#
+# legasy bios版は？
 
 # 設定
 HOST_NAME="${HOST_NAME:-debian}"
@@ -28,17 +31,17 @@ workdir="/dev/shm/rootfs"
 cleanup() {
     # 既存のパーティションをアンマウント
     for part in $(lsblk -ln -o NAME "$DISK" | grep -v "^$(basename "$DISK")\$"); do
-        umount "/dev/$part" 2>/dev/null || true
+        umount "/dev/$part" 2>/dev/null
     done
 
     sleep 1
 
     if [ -d "$workdir" ] && mountpoint -q "$workdir" 2>/dev/null; then
         echo "Unmounting $workdir..."
-        umount -R "$workdir" 2>/dev/null || true
+        umount -R "$workdir" 2>/dev/null
     fi
     
-    [ -d "$workdir" ] && rmdir "$workdir" 2>/dev/null || true
+    [ -d "$workdir" ] && rmdir "$workdir" 2>/dev/null
 }
 
 cleanup
@@ -54,7 +57,7 @@ else
 fi
 
 # パーティション情報を再読み込み
-partprobe "$DISK" 2>/dev/null || true
+partprobe "$DISK" 2>/dev/null
 sleep 1
 
 # 依存コマンドチェック
@@ -102,16 +105,17 @@ if [ -n "$PROXY" ]; then
     debootstrap --no-check-gpg bookworm "$workdir" "$PROXY/deb.debian.org/debian" 
     echo "Acquire::http::Proxy \"$PROXY\";" > "$workdir/etc/apt/apt.conf.d/02proxy"
 else
+    # 通常通り外部ネットワークから取得
     debootstrap bookworm "$workdir"
 fi
 
-# chrootの準備
+# chroot環境に環境変数渡す
 ROOT_UUID=$(blkid -s UUID -o value $ROOT_PART)
 EFI_UUID=$(blkid -s UUID -o value $EFI_PART)
 
 export ROOT_UUID EFI_UUID HOST_NAME TIME_ZONE LOCALE
 
-# システム設定
+# chrootのためのシステム設定
 echo "chroot new rootfs"
 mount --bind /dev "$workdir"/dev
 mount --bind /proc "$workdir"/proc
@@ -119,7 +123,7 @@ mount --bind /sys "$workdir"/sys
 mount -t efivarfs none "$workdir"/sys/firmware/efi/efivars 
 # 環境によりefivarsのマウントに失敗した場合、bootctlも失敗
 # その場合は手動(スクリプト)コピーする方法もあるらしい
-
+# なぜこれでヒアドキュメントのネストが機能するか不明だけど、とりあえずうまくいってる
 chroot "$workdir" /bin/bash <<'EOF'
 
 # ホスト名、ロケール、タイムゾーン
@@ -189,7 +193,7 @@ Name=en*
 DHCP=yes
 NET
 
-# systemctl enable同様にsystemctlなしで
+# systemctl enable同様の設定(chroot内でsystemctlコマンドを使えないため)
 ln -s /lib/systemd/system/systemd-networkd.service \
     /etc/systemd/system/multi-user.target.wants/systemd-networkd.service
 
@@ -197,8 +201,6 @@ ln -s /lib/systemd/system/systemd-networkd.service \
 echo root:root | chpasswd
 EOF
 
-
 echo "=== Installation complete ==="
 echo "Disk: $DISK"
 echo "Hostname: $HOST_NAME"
-exit 0

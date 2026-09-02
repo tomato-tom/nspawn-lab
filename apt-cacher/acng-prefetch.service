@@ -1,0 +1,9 @@
+[Unit]
+Description=ACNG Cache Prefetch
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/aptcacher_prefetch.sh
+User=root
+StandardOutput=journal

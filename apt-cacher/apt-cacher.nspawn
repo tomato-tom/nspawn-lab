@@ -1,0 +1,8 @@
+# /etc/systemd/nspawn/apt-cacher.nspawn
+[Exec]
+Boot=yes
+
+[Network]
+VirtualEthernet=yes
+Bridge=br0
+
