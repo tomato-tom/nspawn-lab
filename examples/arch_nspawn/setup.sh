@@ -233,10 +233,8 @@ for (( i=0; i<container_count; i++ )); do
     c_mount=$(jq -r ".containers[$i].mount" "$CONFIG_FILE")
     c_dns=$(jq -r ".containers[$i].dns // empty" "$CONFIG_FILE")
     
-    set -x
     # ゲートウェイ取得
     c_gateway=$(jq -r ".bridges[] | select(.name == \"$c_bridge\") | .ip_address" "$CONFIG_FILE" | cut -d'/' -f1)
-    set +x
     
     run_container "$c_name" "$c_bridge" "$c_ip" "$c_gateway" "$c_mount" "$c_dns"
 done
