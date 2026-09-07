@@ -56,7 +56,7 @@
       "mount": null
     },
     {
-      "name": "trixie-minbase",
+      "name": "trixie-base",
       "bridge": "br1",
       "ip_address": "10.0.1.100/24",
       "role": "base",
