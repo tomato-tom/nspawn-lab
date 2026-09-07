@@ -1,9 +1,9 @@
 #!/bin/bash
 # setup.sh
 
-# デフォルトの設定ファイルは、config.json
+# デフォルトの設定ファイルは、default.json
 # カスタム設定ファイルは引数で渡す
-CONFIG_FILE="${1:-config.json}"
+CONFIG_FILE="${1:-default.json}"
 
 # -------------------
 # 事前チェック
@@ -25,6 +25,7 @@ fi
 cleanup() {
     echo "=== Starting Cleanup ==="
 
+    # コンテナ停止
     echo "Stopping all running containers..."
     local containers
     containers=$(sudo machinectl list --no-legend | awk '$2 == "container" {print $1}')
@@ -36,7 +37,7 @@ cleanup() {
         echo "No containers to stop."
     fi
 
-    # 2. ブリッジの削除 (group 100 を対象)
+    # group 100 ブリッジの削除
     echo "Deleting bridges in group 100..."
     local bridges
     bridges=$(ip -br link show group 100 | awk '{print $1}')
@@ -46,7 +47,7 @@ cleanup() {
     done
     sleep 1
 
-    # 3. nat tableクリア
+    # nat tableクリア
     echo "Deleting nftables table..."
     sudo nft delete table inet nat
     
@@ -76,7 +77,6 @@ create_bridge() {
 setup_nat() {
     local wan_if="$1"
     local network="$2"
-    local flush="$3"
     
     echo "--- Setting up NAT for $network via $wan_if ---"
     
@@ -123,7 +123,7 @@ run_container() {
 
     # tmuxでバックグラウンド起動
     tmux new-window -d -n "$name" "${cmd[@]}" 2>/dev/null || {
-        echo "Warning: tmux window '$name' might already exist or failed to create."
+        echo "Warning: tmux window '$name' failed to create."
     }
 
     # 起動待ち
@@ -178,8 +178,8 @@ fi
 
 # WANインターフェース検出
 wanif=""
-if ip route show default | grep -E 'enp|ens'; then
-    wanif="$(ip route show default | grep -E 'enp|ens' | head -n1 | cut -d' ' -f5)"
+if ip route show default | grep -E 'enp|ens|eno'; then
+    wanif="$(ip route show default | grep -E 'enp|ens|eno' | head -n1 | cut -d' ' -f5)"
 elif ip route show default | grep wlp; then
     wanif="$(ip route show default | grep wlp | head -n1 | cut -d' ' -f5)"
 else
@@ -196,14 +196,10 @@ for (( i=0; i<bridge_count; i++ )); do
     b_name=$(jq -r ".bridges[$i].name" "$CONFIG_FILE")
     b_id=$(jq -r ".bridges[$i].id" "$CONFIG_FILE")
     b_network=$(jq -r ".bridges[$i].network" "$CONFIG_FILE")
-    b_gateway=$(jq -r ".bridges[$i].gateway_ip" "$CONFIG_FILE")
-    b_flush=$(jq -r ".bridges[$i].flush_nat" "$CONFIG_FILE")
-    
-    # IPアドレス生成 (例: br0 -> 10.0.0.1/24)
-    b_ip="${b_gateway}/24"
+    b_ip=$(jq -r ".bridges[$i].ip_address" "$CONFIG_FILE")
     
     create_bridge "$b_name" "$b_ip"
-    setup_nat "$wanif" "$b_network" "$b_flush"
+    setup_nat "$wanif" "$b_network"
     
     # ポートフォワード設定
     pf_count=$(jq ".bridges[$i].port_forwards | length" "$CONFIG_FILE")
@@ -237,12 +233,12 @@ for (( i=0; i<container_count; i++ )); do
     c_mount=$(jq -r ".containers[$i].mount" "$CONFIG_FILE")
     c_dns=$(jq -r ".containers[$i].dns // empty" "$CONFIG_FILE")
     
+    set -x
     # ゲートウェイ取得
-    c_gateway=$(jq -r ".bridges[] | select(.name == \"$c_bridge\") | .gateway_ip" "$CONFIG_FILE")
+    c_gateway=$(jq -r ".bridges[] | select(.name == \"$c_bridge\") | .ip_address" "$CONFIG_FILE" | cut -d'/' -f1)
+    set +x
     
     run_container "$c_name" "$c_bridge" "$c_ip" "$c_gateway" "$c_mount" "$c_dns"
-
-    #sleep 3 # debug
 done
 
 echo ""

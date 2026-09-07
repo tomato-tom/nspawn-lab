@@ -2,7 +2,6 @@
   "bridges": [
     {
       "name": "br0",
-      "id": 0,
       "network": "10.0.0.0/24",
       "ip_address": "10.0.0.1/24",
       "port_forwards": [
@@ -16,9 +15,14 @@
     },
     {
       "name": "br1",
-      "id": 1,
       "network": "10.0.1.0/24",
       "ip_address": "10.0.1.1/24",
+      "port_forwards": []
+    },
+    {
+      "name": "br2",
+      "network": "10.0.2.0/24",
+      "ip_address": "10.0.2.1/24",
       "port_forwards": []
     }
   ],
@@ -34,7 +38,7 @@
       "name": "arch-02",
       "bridge": "br0",
       "ip_address": "10.0.0.3/24",
-      "role": "python uv",
+      "role": "python",
       "mount": null
     },
     {
@@ -60,8 +64,8 @@
     },
     {
       "name": "resolute-01",
-      "bridge": "br1",
-      "ip_address": "10.0.1.5/24",
+      "bridge": "br2",
+      "ip_address": "10.0.2.2/24",
       "role": "none",
       "mount": null,
       "dns": "1.1.1.1"
