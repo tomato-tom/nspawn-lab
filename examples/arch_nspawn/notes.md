@@ -203,6 +203,7 @@ arch-base
 trixie-minbase 
 trixie-01      ollama
 trixie-02      ansible
+trixie-02      apt-cacher-ng
 ```
 
 その他アイディア

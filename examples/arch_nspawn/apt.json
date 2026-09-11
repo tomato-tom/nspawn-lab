@@ -1,0 +1,67 @@
+{
+  "bridges": [
+    {
+      "name": "br0",
+      "network": "10.0.0.0/24",
+      "ip_address": "10.0.0.1/24",
+      "port_forwards": []
+    },
+    {
+      "name": "br1",
+      "network": "10.0.1.0/24",
+      "ip_address": "10.0.1.1/24",
+      "port_forwards": []
+    }
+  ],
+  "containers": [
+    {
+      "name": "trixie-base",
+      "bridge": "br0",
+      "ip_address": "10.0.0.100/24",
+      "role": "base",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    },
+    {
+      "name": "trixie-01",
+      "bridge": "br0",
+      "ip_address": "10.0.0.101/24",
+      "role": "ollama",
+      "mount": "/mnt/strage/ollama_models:/usr/share/ollama/.ollama/models",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    },
+    {
+      "name": "trixie-02",
+      "bridge": "br0",
+      "ip_address": "10.0.0.102/24",
+      "role": "ansible controle",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    },
+    {
+      "name": "trixie-03",
+      "bridge": "br0",
+      "ip_address": "10.0.0.103/24",
+      "role": "apt cacher",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    },
+    {
+      "name": "resolute-base",
+      "bridge": "br1",
+      "ip_address": "10.0.1.100/24",
+      "role": "none",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    },
+    {
+      "name": "resolute-01",
+      "bridge": "br1",
+      "ip_address": "10.0.1.101/24",
+      "role": "none",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    }
+  ]
+}

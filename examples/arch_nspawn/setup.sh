@@ -106,6 +106,7 @@ run_container() {
     local gateway="$4"
     local mount="$5"
     local dns="$6"
+    local proxy="$7"
 
     echo "--- Starting Container: $name ---"
 
@@ -160,6 +161,13 @@ run_container() {
         " &>/dev/null
     fi
     
+    # Proxy設定
+    if [ "$proxy" != "null" ] && [ -n "$proxy" ]; then
+        echo "  Setting APT proxy: $proxy"
+        sudo machinectl shell "$name" /bin/bash -c \
+            "echo 'Acquire::http::Proxy \"http://$proxy\";' > /etc/apt/apt.conf.d/02proxy"
+    fi
+
     echo "  Container $name ready."
 }
 
@@ -170,9 +178,9 @@ cleanup
 
 # ネットワーク確認
 if ping -c 1 -w 1 1.1.1.1 >/dev/null; then
-    echo "Network connection OK"
+    echo "External network connection OK"
 else
-    echo "Network connection error"
+    echo "External network connection error"
     exit 1
 fi
 
@@ -230,13 +238,20 @@ for (( i=0; i<container_count; i++ )); do
     c_name=$(jq -r ".containers[$i].name" "$CONFIG_FILE")
     c_bridge=$(jq -r ".containers[$i].bridge" "$CONFIG_FILE")
     c_ip=$(jq -r ".containers[$i].ip_address" "$CONFIG_FILE")
-    c_mount=$(jq -r ".containers[$i].mount" "$CONFIG_FILE")
+    c_mount=$(jq -r ".containers[$i].mount // empty" "$CONFIG_FILE")
     c_dns=$(jq -r ".containers[$i].dns // empty" "$CONFIG_FILE")
+    c_proxy=$(jq -r ".containers[$i].proxy // empty" "$CONFIG_FILE")
     
     # ゲートウェイ取得
     c_gateway=$(jq -r ".bridges[] | select(.name == \"$c_bridge\") | .ip_address" "$CONFIG_FILE" | cut -d'/' -f1)
     
-    run_container "$c_name" "$c_bridge" "$c_ip" "$c_gateway" "$c_mount" "$c_dns"
+    run_container "$c_name" \
+        "$c_bridge" \
+        "$c_ip" \
+        "$c_gateway" \
+        "$c_mount" \
+        "$c_dns" \
+        "$c_proxy"
 done
 
 echo ""
