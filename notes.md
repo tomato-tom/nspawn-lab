@@ -1,14 +1,12 @@
-# Systemd Nspawn Script
+# nspawn script
 
-bashスクリプト・メイン
-Ansibleなどで管理?
+nspawnコンテナの雑多なスクリプトとメモ
 
 ## ディレクトリ構造
 
+libは解体して、snippetsに入れよう
 ```
 .
-├── bin
-│   └── paw.sh
 ├── config
 │   ├── custom.conf
 │   ├── custom-nat-template.nft
@@ -16,166 +14,91 @@ Ansibleなどで管理?
 │   ├── default_container.conf
 │   └── example_nspawn.yml
 ├── docs
+│   ├── apt_cacher.md
+│   ├── chrony.md
+│   ├── etckeeper.md
 │   ├── getting-started-nspawn.md
 │   ├── index.md
+│   ├── lighttpd_rootfs_server.md
 │   └── nspawn-markmap.md
+├── examples
+│   ├── ansible
+│   │   └── ansible.md
+│   ├── apt-cacher
+│   │   ├── prefetch
+│   │   │   ├── acng_additional.txt
+│   │   │   ├── acng_container_packages.list
+│   │   │   ├── acng-prefetch.service
+│   │   │   ├── acng-prefetch.timer
+│   │   │   ├── apt-cacher.nspawn
+│   │   │   ├── aptcacher_prefetch.sh
+│   │   │   ├── bookworm_baremetal_additional_packages.txt
+│   │   │   ├── bookworm_minbase_packages.list
+│   │   │   ├── debian_installed_packages_2026-04-05.list
+│   │   │   ├── deploy.sh
+│   │   │   ├── notes.md
+│   │   │   └── systemd
+│   │   │       ├── 80-container-host0.network
+│   │   │       ├── br0.netdev
+│   │   │       └── br0.network
+│   │   └── setup.md
+│   ├── arch_nspawn
+│   │   ├── all.json
+│   │   ├── apt.json
+│   │   ├── arch_firsttime_setup.sh
+│   │   ├── default.json
+│   │   ├── empty.json
+│   │   ├── fix_wifi.sh
+│   │   ├── host_benchmark.sh
+│   │   ├── notes.md
+│   │   ├── ollama.md
+│   │   ├── pacoloco.md
+│   │   ├── setup_script.md
+│   │   ├── setup.sh
+│   │   ├── test.json
+│   │   ├── test_prompt.md
+│   │   ├── trixie_firsttime_setup.sh
+│   │   ├── trixie.json
+│   │   ├── update_all.sh
+│   │   └── zram_host_results.csv
+│   ├── debian_install
+│   │   ├── first-boot-setup.service
+│   │   ├── first-boot-setup.sh
+│   │   ├── install_debian.sh
+│   │   └── notes.md
+│   └── git_server
+│       ├── lighttpd.conf
+│       ├── nftables.conf
+│       ├── notes.md
+│       └── setup.sh
 ├── lib
 │   ├── common.sh
+│   ├── container
+│   │   ├── container_image.sh
+│   │   ├── container.sh
+│   │   └── container_state.sh
 │   ├── logger.sh
 │   ├── query.sh
 │   ├── setup_nspawn.sh
-│   ├── container
-│   │   ├── container_image.sh
-│   │   └── container.sh
 │   └── vnet
 │       ├── bridge.sh
 │       ├── netns.sh
 │       ├── network.sh
 │       └── veth.sh
-├── logs
-│   └── script.log
-├── Makefile
+├── notes.md
+├── README.md
 ├── snippets
 │   ├── assert.sh
 │   ├── debian_static_address.sh
 │   ├── map_functions.sh
 │   ├── nat.sh
 │   ├── parse_script.py
-│   └── show_network_info.sh
-├── README.md
+│   ├── run_unshare.sh
+│   ├── show_network_info.sh
+│   └── stop_unshare.sh
 └── tests
     ├── logger_test.sh
-    ├── logs
-    │   ├── test.log
-    │   ├── test.log.1
-    │   ├── test.log.2
-    │   └── test.log.3
     ├── test_bridge.sh
     └── test_veth.sh
-```
 
-
-## 設定ファイルテンプレートの例
-
-**1. ラボ環境用 (lab.yaml)**
-- default
-- root:rootでシンプルに
-- カスタムネットワーク
-- 一時的なストレージ設定
-- 自動クリーンアップ設定
-- リソース制限
-
-**2. 開発環境用 (dev.yaml)**
-- sudoユーザー追加
-- リソース制限
-- ソースコードのバインドマウント
-- デバッグ用のケーパビリティ追加
-- ポートフォワーディング多数
-
-**3. 本番環境用 (prod.yaml)**
-- リソース制限
-- 読み取り専用ファイルシステム
-- セキュリティ制限強化
-- 最小限のケーパビリティ
-
-## 進化の流れ
-1. まずは基本的なテンプレートを提供
-2. 利用パターンを分析
-3. 使いながら調整
-
-
-### テンプレート
-
-lab.yaml - ラボ環境用
-```yaml
-container:
-  name: "lab-container"
-  description: "実験環境"
-  user:
-    name: "root"
-    pasword: "root"
-
-network:
-  type: "none"
-
-storage:
-  ephemeral: true
-  tmpfs: true
-  binds:
-    - "/tmp"
-
-resources:
-  memory: "8G"
-  cpus: 8
-```
-
-dev.yaml - 開発環境用
-```yaml
-container:
-  name: "dev-container"
-  description: "開発用環境"
-  user:
-    name: admin
-    pasword:********  # .env等で
-
-network:
-  type: "nat"
-  ports:
-    - "8000~8999"
-
-storage:
-  binds:
-    - "$(pwd):/app"
-
-resources:
-  memory: 32
-  cpus: 16
-```
-
-prod.yaml - 本番環境用
-```yaml
-container:
-  name: "prod-container"
-  description: "本番用環境"
-  user: "app"
-  password: ""  # vaultなど使用
-
-network:
-  type: "bridge"
-  interface: "prod-br0"
-  ports:
-    - "443:8443"
-    - "80:8080"
-
-storage:
-  ephemeral: false
-  binds:
-    - "/opt/app:/app:ro"
-    - "/var/log/app:/var/log/app"
-    - "/etc/ssl/certs:/etc/ssl/certs:ro"
-
-resources:
-  memory: 4
-  cpus: 2
-  memory_swap: 4
-
-security:
-  level: "strict"
-  user_ns: true
-  private_network: false
-  capabilities_drop: ["ALL"]
-  capabilities_add: ["NET_BIND_SERVICE", "SETUID", "SETGID"]
-  readonly_paths: ["/", "/usr", "/lib", "/bin", "/sbin"]
-  readwrite_paths: ["/tmp", "/var/log/app", "/run"]
-  no_new_privileges: true
-  
-logging:
-  journal: true
-  syslog: true
-  audit: true
-
-health:
-  auto_restart: true
-  watchdog: 30s
-  max_restart: 5
-```
+16 directories, 78 files

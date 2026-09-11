@@ -89,7 +89,7 @@ setup_nat() {
     # postroutingチェーンの作成
     sudo nft add chain inet nat postrouting '{ type nat hook postrouting priority srcnat; policy accept; }'
     
-    # preroutingチェーンの作成（ポートフォワード用・存在しない場合）
+    # preroutingチェーンの作成（ポートフォワード用）
     sudo nft add chain inet nat prerouting '{ type nat hook prerouting priority dstnat; policy accept; }'
     
     # SNATルール追加
@@ -241,8 +241,6 @@ for (( i=0; i<container_count; i++ )); do
     c_mount=$(jq -r ".containers[$i].mount // empty" "$CONFIG_FILE")
     c_dns=$(jq -r ".containers[$i].dns // empty" "$CONFIG_FILE")
     c_proxy=$(jq -r ".containers[$i].proxy // empty" "$CONFIG_FILE")
-    
-    # ゲートウェイ取得
     c_gateway=$(jq -r ".bridges[] | select(.name == \"$c_bridge\") | .ip_address" "$CONFIG_FILE" | cut -d'/' -f1)
     
     run_container "$c_name" \
@@ -256,4 +254,3 @@ done
 
 echo ""
 echo "=== All Done ==="
-ip -br addr show group 100
