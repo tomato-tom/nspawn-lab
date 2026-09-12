@@ -163,9 +163,15 @@ run_container() {
     
     # Proxy設定
     if [ "$proxy" != "null" ] && [ -n "$proxy" ]; then
-        echo "  Setting APT proxy: $proxy"
-        sudo machinectl shell "$name" /bin/bash -c \
-            "echo 'Acquire::http::Proxy \"http://$proxy\";' > /etc/apt/apt.conf.d/02proxy"
+        echo "  Setting proxy: $proxy"
+        sudo machinectl shell "$name" /bin/bash -c '
+            proxy="$0"
+            if apt -v 2&>/dev/null; then
+                echo "Acquire::http::Proxy \"http://$proxy\";" > /etc/apt/apt.conf.d/02proxy
+            elif pacman -V 2&>/dev/null; then
+                echo "Server = http://$proxy/repo/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
+            fi
+        ' "$proxy" &>/dev/null
     fi
 
     echo "  Container $name ready."
