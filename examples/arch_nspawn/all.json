@@ -29,82 +29,82 @@
   "containers": [
     {
       "name": "arch-base",
+      "role": "base",
       "bridge": "br0",
       "ip_address": "10.0.0.100/24",
-      "role": "base",
       "dns": "1.1.1.1",
       "proxy": "10.0.0.101:9129"
     },
     {
       "name": "arch-01",
+      "role": "pacoloco",
       "bridge": "br0",
       "ip_address": "10.0.0.101/24",
-      "role": "pacoloco",
       "dns": "1.1.1.1",
       "proxy": "localhost:9129"
     },
     {
       "name": "arch-02",
+      "role": "python",
       "bridge": "br0",
       "ip_address": "10.0.0.102/24",
-      "role": "python",
       "dns": "1.1.1.1",
       "proxy": "10.0.0.101:9129"
     },
     {
       "name": "arch-03",
+      "role": "none",
       "bridge": "br0",
       "ip_address": "10.0.0.103/24",
-      "role": "none",
       "dns": "1.1.1.1",
       "proxy": "10.0.0.101:9129"
     },
     {
       "name": "trixie-base",
+      "role": "base",
       "bridge": "br1",
       "ip_address": "10.0.1.100/24",
-      "role": "base",
       "dns": "1.1.1.1",
       "proxy": "10.0.1.103:3142"
     },
     {
       "name": "trixie-01",
+      "role": "ollama",
       "bridge": "br1",
       "ip_address": "10.0.1.101/24",
-      "role": "ollama",
       "mount": "/mnt/strage/ollama_models:/usr/share/ollama/.ollama/models",
       "dns": "1.1.1.1",
       "proxy": "10.0.1.103:3142"
     },
     {
       "name": "trixie-02",
+      "role": "ansible controle",
       "bridge": "br1",
       "ip_address": "10.0.1.102/24",
-      "role": "ansible controle",
       "dns": "1.1.1.1",
       "proxy": "10.0.1.103:3142"
     },
     {
       "name": "trixie-03",
+      "role": "apt cacher",
       "bridge": "br1",
       "ip_address": "10.0.1.103/24",
-      "role": "apt cacher",
       "dns": "1.1.1.1",
       "proxy": "localhost:3142"
     },
     {
       "name": "resolute-base",
+      "role": "none",
       "bridge": "br2",
       "ip_address": "10.0.2.100/24",
-      "role": "none",
       "dns": "1.1.1.1",
       "proxy": "10.0.1.103:3142"
     },
     {
       "name": "resolute-01",
+      "role": "none",
       "bridge": "br2",
       "ip_address": "10.0.2.101/24",
-      "role": "none",
       "dns": "1.1.1.1",
       "proxy": "10.0.1.103:3142"
     }
