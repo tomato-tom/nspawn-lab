@@ -4,7 +4,50 @@
 - 個別のスクリプト
 - Ansible
 
+## ファイル
+
+* コンテナ管理
+    - setup.sh
+        - json設定ファイルから複数コンテナをセットアップ
+    - update_all.sh
+        - 全ての作動中コンテナを更新
+    - show_conntainers.py
+        - コンテナ情報表示
+        - 今のところdefault.jsonを整形するのみ
+* 設定ファイル
+    - default.json
+    - all.json
+        - base含む全てのコンテナ
+    - apt.json
+    - empty.json
+        - 空のファイル指定で全てのコンテナ停止、ブリッジ削除
+    - test.json
+* メモ
+    - notes.md
+    - ollama.md
+    - pacoloco.md
+        - Archlinux用のパッケージキャッシャー
+    - test_prompt.md
+* 初回設定
+    - arch_firsttime_setup.sh
+    - trixie_firsttime_setup.sh
+* その他
+    - fix_wifi.sh
+    - host_benchmark.sh
+    - zram_host_results.csv
+
+> アイディア
+> 設定ファイルを一つ（default.json）にして タグで選択したコンテナを起動する
+> 例: ./setup.sh apt # aptパッケージマネージャーを使用するコンテナを起動
+>       default: defaultで選択するコンテナ
+>       deb: debian系
+>       arch: archlinux
+> machinectl list-imagesから抽出
+>
+
+
 ## コンテナ作成
+単一のコマンド並べてコンテナ操作
 
 Archコンテナ作成
 
@@ -130,12 +173,7 @@ ip route add default via 10.0.0.1
 ```
 > 一時的な設定、コンテナ停止でクリア
 > 以上とりあえずネットワークつなげる
-> 実運用では'policy drop'のfilterテーブルで必要な経路のみに絞ればいいだろう
 
-コンテナのDNSはデフォルトつながることも多いけど必要ならば
-```
-echo "nameserver 8.8.8.8" > /etc/resolv.conf
-```
 
 ## ポート転送
 
@@ -149,6 +187,8 @@ sudo nft add chain inet nat prerouting { type nat hook prerouting priority dstna
 # container: 80
 sudo nft add rule inet nat prerouting iifname wlp3s0 tcp dport 8080 dnat ip to 10.0.0.101:80
 ```
+
+単一ノード、ラップトップのみでやる場合は不要かも、他のマシンにポート公開する場合
 
 ## 設定の永続化
 
@@ -197,39 +237,26 @@ EOF
 
 ```
 NAME           
+arch-base      
 arch-01        pacoloco
 arch-02        python uv
-arch-base      
-trixie-minbase 
+trixie-base
 trixie-01      ollama
 trixie-02      ansible
-trixie-02      apt-cacher-ng
+trixie-03      apt-cacher-ng
 ```
 
 その他アイディア
-- chrony
-- dnsmasq
-- pihole
-- prometheus
-- squid
-- rsyslog
-- nextcloud
-- NFS
-- ansible
+- インフラ
+    - chrony
+    - dnsmasq
+    - pihole
+    - prometheus
+    - squid
+    - rsyslog
+    - NFS
+    - ansible
+- サービス
+    - nextcloud
 
-
-## ファイル
-
-```
-bridge_nat.sh
-    指定したブリッジのネットワークを外部通信できるようにNAT
-create_bridge.sh
-    ブリッジ作成
-pacoloco.md
-    Archlinux用のパッケージキャッシャー
-setup.sh
-    複数コンテナをセットアップ
-update_all.sh
-    全ての作動中コンテナを更新
-```
 
