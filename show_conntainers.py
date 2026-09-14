@@ -96,7 +96,7 @@ def main():
     """メイン関数"""
     # スクリプトのあるディレクトリを基準に設定ファイルを探す
     script_dir = Path(__file__).parent
-    config_path = script_dir / "default.json"
+    config_path = script_dir / "config/default.json"
     
     # コマンドライン引数で指定された場合
     if len(sys.argv) > 1:
