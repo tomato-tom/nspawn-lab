@@ -1,0 +1,75 @@
+host:
+  bridge:
+    - name: br0
+      description: "Management Segment"
+      subnet: "10.0.100.0/24"
+      ip_address: "10.0.100.1/24"
+      interfaces:
+        - name: p0
+          connect_to: "trixie-04:en0"
+        - name: p1
+          connect_to: "trixie-05:en0"
+        - name: p2
+          connect_to: "trixie-06:en0"
+        - name: p3
+          connect_to: "trixie-07:en0"
+        - name: p4
+          connect_to: "trixie-08:en0"
+    - name: br1
+      description: "Client Segment"
+      subnet: "10.0.0.0/24"
+      ip_address: "10.0.0.1/24"
+      interfaces:
+        - name: p0
+          connect_to: "trixie-04:en1"
+        - name: p1
+          connect_to: "trixie-09:en0"
+        - name: p2
+          connect_to: "trixie-10:en0"
+
+containers:
+  - name: trixie-04
+    role: "Switch, hsFlowd"
+    interfaces:
+      - name: "en0"
+        purpose: "sFlow export & Management"
+        connect_to: "br0:p0"
+      - name: "en1"
+        purpose: "Client"
+        connect_to: "br1:p0"
+  - name: trixie-05
+    role: "goflow2"
+    interfaces:
+      - name: "en0"
+        purpose: "sFlow Collector"
+        connect_to: "br0:p1"
+  - name: trixie-06
+    role: "vector"
+    interfaces:
+      - name: "en0"
+        purpose: "Log/Telemetry Pipeline"
+        connect_to: "br0:p2"
+  - name: trixie-07
+    role: "victoriametrics"
+    interfaces:
+      - name: "en0"
+        purpose: "Time-series Database"
+        connect_to: "br0:p3"
+  - name: trixie-08
+    role: "grafana"
+    interfaces:
+      - name: "en0"
+        purpose: "Visualization Dashboard"
+        connect_to: "br0:p4"
+  - name: trixie-09
+    role: "Client 1, Traffic Source (iperf3/tcpreplay)"
+    interfaces:
+      - name: "en0"
+        purpose: "Data Plane Traffic"
+        connect_to: "br1:p1"
+  - name: trixie-10
+    role: "Client 2, Traffic Source (iperf3/tcpreplay)"
+    interfaces:
+      - name: "en0"
+        purpose: "Data Plane Traffic"
+        connect_to: "br1:p2"

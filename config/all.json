@@ -93,6 +93,46 @@
       "proxy": "localhost:3142"
     },
     {
+      "name": "trixie-04",
+      "role": "router",
+      "bridge": "br1",
+      "ip_address": "10.0.1.104/24",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    },
+    {
+      "name": "trixie-05",
+      "role": "goflow2",
+      "bridge": "br1",
+      "ip_address": "10.0.1.105/24",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    },
+    {
+      "name": "trixie-06",
+      "role": "vector",
+      "bridge": "br1",
+      "ip_address": "10.0.1.106/24",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    },
+    {
+      "name": "trixie-07",
+      "role": "victoriametrics",
+      "bridge": "br1",
+      "ip_address": "10.0.1.107/24",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    },
+    {
+      "name": "trixie-08",
+      "role": "grafana",
+      "bridge": "br1",
+      "ip_address": "10.0.1.108/24",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    },
+    {
       "name": "resolute-base",
       "role": "none",
       "bridge": "br2",

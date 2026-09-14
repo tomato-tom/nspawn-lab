@@ -1,0 +1,60 @@
+{
+  "bridges": [
+    {
+      "name": "br0",
+      "network": "10.0.0.0/24",
+      "ip_address": "10.0.0.1/24",
+      "port_forwards": []
+    }
+  ],
+  "containers": [
+    {
+      "name": "trixie-03",
+      "role": "apt cacher",
+      "bridge": "br0",
+      "ip_address": "10.0.0.103/24",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    },
+    {
+      "name": "trixie-04",
+      "role": "switch",
+      "bridge": "br0",
+      "ip_address": "10.0.0.104/24",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    },
+    {
+      "name": "trixie-05",
+      "role": "goflow2",
+      "bridge": "br0",
+      "ip_address": "10.0.0.105/24",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    },
+    {
+      "name": "trixie-06",
+      "role": "vector",
+      "bridge": "br0",
+      "ip_address": "10.0.0.106/24",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    },
+    {
+      "name": "trixie-07",
+      "role": "victoriametrics",
+      "bridge": "br0",
+      "ip_address": "10.0.0.107/24",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    },
+    {
+      "name": "trixie-08",
+      "role": "grafana",
+      "bridge": "br0",
+      "ip_address": "10.0.1.108/24",
+      "dns": "1.1.1.1",
+      "proxy": "localhost:3142"
+    }
+  ]
+}
