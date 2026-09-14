@@ -3,7 +3,7 @@
 
 # デフォルトの設定ファイルは、default.json
 # カスタム設定ファイルは引数で渡す
-CONFIG_FILE="${1:-default.json}"
+CONFIG_FILE="${1:-config/default.json}"
 
 # -------------------
 # 事前チェック

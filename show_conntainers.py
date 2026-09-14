@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 nspawn コンテナ情報表示スクリプト
-default.json からコンテナとブリッジの情報を読み込んで表示
+config/default.json からコンテナとブリッジの情報を読み込んで表示
 """
 
 import json
@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 
-def load_config(config_path="default.json"):
+def load_config(config_path="config/default.json"):
     """設定ファイルを読み込む"""
     config_file = Path(config_path)
     if not config_file.exists():
