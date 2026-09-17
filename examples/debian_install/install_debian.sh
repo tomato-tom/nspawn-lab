@@ -27,6 +27,14 @@ fi
 [ -z "$1" ] && { echo "usage: sudo $0 /dev/sdX"; exit 1; }
 DISK="$1"
 
+# ホストマシンのUEFIチェック
+if [ -d /sys/firmware/efi ]; then
+    echo "UEFI mode detected"
+else
+    echo "Legacy BIOS mode detected"
+    exit 1
+fi
+
 echo "=== Cleaning DISK $DISK ==="
 workdir="/dev/shm/rootfs"
 cleanup() {
@@ -107,7 +115,7 @@ if [ -n "$PROXY" ]; then
     http_proxy="$PROXY" debootstrap "$SUITE" "$workdir" http://deb.debian.org/debian
     echo "Acquire::http::Proxy \"$PROXY\";" > "$workdir/etc/apt/apt.conf.d/02proxy"
 else
-    # 外部ネットワークから取得
+    # 通常のdebianミラーから取得
     debootstrap "$SUITE" "$workdir"
 fi
 
