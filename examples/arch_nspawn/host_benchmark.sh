@@ -52,6 +52,10 @@ EOF
     sleep 5
 done
 
+# Cleanup
+sudo rm -f /etc/systemd/zram-generator.d/zram0.conf
+sudo systemctl daemon-reload
+
 echo "----------------------------------------"
 echo "All tests complete!"
 cat $RESULTS_FILE
