@@ -67,14 +67,6 @@
       "ip_address": "10.0.1.103/24",
       "dns": "1.1.1.1",
       "proxy": "localhost:3142"
-    },
-    {
-      "name": "resolute-01",
-      "role": "none",
-      "bridge": "br2",
-      "ip_address": "10.0.2.101/24",
-      "dns": "1.1.1.1",
-      "proxy": "10.0.1.103:3142"
     }
   ]
 }
