@@ -5,6 +5,12 @@
       "network": "10.0.0.0/24",
       "ip_address": "10.0.0.1/24",
       "port_forwards": []
+    },
+    {
+      "name": "br1",
+      "network": "10.0.1.0/24",
+      "ip_address": "10.0.1.1/24",
+      "port_forwards": []
     }
   ],
   "containers": [
@@ -17,16 +23,8 @@
       "proxy": "localhost:3142"
     },
     {
-      "name": "trixie-04",
-      "role": "switch",
-      "bridge": "br0",
-      "ip_address": "10.0.0.104/24",
-      "dns": "1.1.1.1",
-      "proxy": "localhost:3142"
-    },
-    {
       "name": "trixie-05",
-      "role": "goflow2",
+      "role": "nfcapd",
       "bridge": "br0",
       "ip_address": "10.0.0.105/24",
       "dns": "1.1.1.1",
@@ -34,25 +32,25 @@
     },
     {
       "name": "trixie-06",
-      "role": "vector",
+      "role": "nfsen-ng",
       "bridge": "br0",
       "ip_address": "10.0.0.106/24",
       "dns": "1.1.1.1",
       "proxy": "localhost:3142"
     },
     {
-      "name": "trixie-07",
-      "role": "victoriametrics",
-      "bridge": "br0",
-      "ip_address": "10.0.0.107/24",
+      "name": "trixie-04",
+      "role": "router",
+      "bridge": "br1",
+      "ip_address": "10.0.1.104/24",
       "dns": "1.1.1.1",
       "proxy": "localhost:3142"
     },
     {
-      "name": "trixie-08",
-      "role": "grafana",
-      "bridge": "br0",
-      "ip_address": "10.0.1.108/24",
+      "name": "trixie-09",
+      "role": "scapy",
+      "bridge": "br1",
+      "ip_address": "10.0.1.109/24",
       "dns": "1.1.1.1",
       "proxy": "localhost:3142"
     }

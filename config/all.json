@@ -134,7 +134,7 @@
     },
     {
       "name": "trixie-09",
-      "role": "none",
+      "role": "scapy",
       "bridge": "br1",
       "ip_address": "10.0.1.109/24",
       "dns": "1.1.1.1",
