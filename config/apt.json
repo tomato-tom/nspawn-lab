@@ -48,6 +48,62 @@
       "proxy": "localhost:3142"
     },
     {
+      "name": "trixie-04",
+      "role": "router",
+      "bridge": "br0",
+      "ip_address": "10.0.0.104/24",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    },
+    {
+      "name": "trixie-05",
+      "role": "nfcapd",
+      "bridge": "br0",
+      "ip_address": "10.0.0.105/24",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    },
+    {
+      "name": "trixie-06",
+      "role": "nfsen-ng",
+      "bridge": "br0",
+      "ip_address": "10.0.0.106/24",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    },
+    {
+      "name": "trixie-07",
+      "role": "victoriametrics",
+      "bridge": "br0",
+      "ip_address": "10.0.0.107/24",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    },
+    {
+      "name": "trixie-08",
+      "role": "grafana",
+      "bridge": "br0",
+      "ip_address": "10.0.0.108/24",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    },
+    {
+      "name": "trixie-09",
+      "role": "scapy",
+      "bridge": "br0",
+      "ip_address": "10.0.0.109/24",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    },
+    {
+      "name": "trixie-10",
+      "role": "none",
+      "bridge": "br0",
+      "ip_address": "10.0.0.110/24",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
+    },
+    {
       "name": "resolute-base",
       "bridge": "br1",
       "ip_address": "10.0.1.100/24",
