@@ -23,36 +23,31 @@
       "proxy": "localhost:3142"
     },
     {
-      "name": "trixie-05",
-      "role": "nfcapd",
-      "bridge": "br0",
-      "ip_address": "10.0.0.105/24",
-      "dns": "1.1.1.1",
-      "proxy": "localhost:3142"
-    },
-    {
-      "name": "trixie-06",
-      "role": "nfsen-ng",
-      "bridge": "br0",
-      "ip_address": "10.0.0.106/24",
-      "dns": "1.1.1.1",
-      "proxy": "localhost:3142"
-    },
-    {
       "name": "trixie-04",
-      "role": "router",
+      "role": "Traffic Generator",
+      "tools": "iperf3 hping3 mausezahn tcpdump",
       "bridge": "br1",
       "ip_address": "10.0.1.104/24",
       "dns": "1.1.1.1",
-      "proxy": "localhost:3142"
+      "proxy": "10.0.0.103:3142"
     },
     {
-      "name": "trixie-09",
-      "role": "scapy",
+      "name": "trixie-05",
+      "role": "sFlow Agent Host",
+      "tools": "iperf3 hsflowd tcpdump",
       "bridge": "br1",
-      "ip_address": "10.0.1.109/24",
+      "ip_address": "10.0.1.105/24",
       "dns": "1.1.1.1",
-      "proxy": "localhost:3142"
+      "proxy": "10.0.0.103:3142"
+    },
+    {
+      "name": "trixie-06",
+      "role": "Flow Collector & Analyzer",
+      "tools": "nfdump nfsen-ng",
+      "bridge": "br1",
+      "ip_address": "10.0.1.106/24",
+      "dns": "1.1.1.1",
+      "proxy": "10.0.0.103:3142"
     }
   ]
 }

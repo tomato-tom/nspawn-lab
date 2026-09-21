@@ -94,7 +94,8 @@
     },
     {
       "name": "trixie-04",
-      "role": "router",
+      "role": "Traffic Generator",
+      "tools": "iperf3 hping3 mausezahn tcpdump",
       "bridge": "br1",
       "ip_address": "10.0.1.104/24",
       "dns": "1.1.1.1",
@@ -102,7 +103,8 @@
     },
     {
       "name": "trixie-05",
-      "role": "nfcapd",
+      "role": "sFlow Agent Host",
+      "tools": "iperf3 hsflowd tcpdump",
       "bridge": "br1",
       "ip_address": "10.0.1.105/24",
       "dns": "1.1.1.1",
@@ -110,47 +112,16 @@
     },
     {
       "name": "trixie-06",
-      "role": "nfsen-ng",
+      "role": "Flow Collector & Analyzer",
+      "tools": "nfdump nfsen-ng",
       "bridge": "br1",
       "ip_address": "10.0.1.106/24",
       "dns": "1.1.1.1",
       "proxy": "10.0.1.103:3142"
     },
     {
-      "name": "trixie-07",
-      "role": "victoriametrics",
-      "bridge": "br1",
-      "ip_address": "10.0.1.107/24",
-      "dns": "1.1.1.1",
-      "proxy": "10.0.1.103:3142"
-    },
-    {
-      "name": "trixie-08",
-      "role": "grafana",
-      "bridge": "br1",
-      "ip_address": "10.0.1.108/24",
-      "dns": "1.1.1.1",
-      "proxy": "10.0.1.103:3142"
-    },
-    {
-      "name": "trixie-09",
-      "role": "scapy",
-      "bridge": "br1",
-      "ip_address": "10.0.1.109/24",
-      "dns": "1.1.1.1",
-      "proxy": "10.0.1.103:3142"
-    },
-    {
-      "name": "trixie-10",
-      "role": "none",
-      "bridge": "br1",
-      "ip_address": "10.0.1.110/24",
-      "dns": "1.1.1.1",
-      "proxy": "10.0.1.103:3142"
-    },
-    {
       "name": "resolute-base",
-      "role": "none",
+      "role": "base",
       "bridge": "br2",
       "ip_address": "10.0.2.100/24",
       "dns": "1.1.1.1",
